@@ -103,16 +103,15 @@
       <h2>Transaction History</h2>
       <div class="scroll-area" id="history"></div>
     </div>
+
+    <div class="section">
+      <button onclick="resetAll()">Reset All Transactions</button>
+    </div>
   </div>
 
   <script>
-    let friends = JSON.parse(localStorage.getItem('friends')) || [];
-    let historyEntries = JSON.parse(localStorage.getItem('history')) || [];
-
-    function saveData() {
-      localStorage.setItem('friends', JSON.stringify(friends));
-      localStorage.setItem('history', JSON.stringify(historyEntries));
-    }
+    const friends = [];
+    const history = [];
 
     function updateFriendSelectors() {
       const selectors = ["expensePayer", "settlePayer", "settleReceiver", "debtFilter"];
@@ -139,23 +138,12 @@
       });
     }
 
-    function renderHistory() {
-      const log = document.getElementById("history");
-      log.innerHTML = "";
-      historyEntries.slice().reverse().forEach(entry => {
-        const item = document.createElement("div");
-        item.textContent = entry;
-        log.appendChild(item);
-      });
-    }
-
     function addFriend() {
       const name = document.getElementById("friendName").value.trim();
       if (name && !friends.find(f => f.name === name)) {
         friends.push({ name, balance: 0 });
         updateFriendSelectors();
         renderFriends();
-        saveData();
         document.getElementById("friendName").value = "";
       }
     }
@@ -167,14 +155,13 @@
       const split = amount / friends.length;
       friends.forEach(friend => {
         if (friend.name === payer) {
-          friend.balance += amount - split;
+          friend.balance += amount - split * (friends.length - 1);
         } else {
           friend.balance -= split;
         }
       });
       renderFriends();
-      updateHistory(`${payer} paid $${amount.toFixed(2)} split between ${friends.length} friends`);
-      saveData();
+      updateHistory(`${payer} paid $${amount.toFixed(2)} split among ${friends.length} friends`);
       document.getElementById("expenseAmount").value = "";
       displayDebts();
     }
@@ -190,7 +177,6 @@
       });
       renderFriends();
       updateHistory(`${payer} settled $${amount.toFixed(2)} with ${receiver}`);
-      saveData();
       document.getElementById("settleAmount").value = "";
       displayDebts();
     }
@@ -203,11 +189,11 @@
       const fromPerson = friends.find(f => f.name === selected);
       friends.forEach(friend => {
         if (friend.name !== fromPerson.name) {
-          const diff = friend.balance - fromPerson.balance;
-          if (diff > 0.01) {
+          const diff = fromPerson.balance - friend.balance;
+          if (diff < -0.01) {
             const div = document.createElement("div");
             div.className = "debt";
-            div.innerHTML = `<span>${fromPerson.name} owes ${friend.name}</span><span>$${(diff / 2).toFixed(2)}</span>`;
+            div.innerHTML = `<span>${fromPerson.name} owes ${friend.name}</span><span>$${(-diff / 2).toFixed(2)}</span>`;
             list.appendChild(div);
           }
         }
@@ -215,17 +201,19 @@
     }
 
     function updateHistory(entry) {
+      const log = document.getElementById("history");
       const time = new Date().toLocaleString();
-      const record = `${time}: ${entry}`;
-      historyEntries.push(record);
-      renderHistory();
+      const item = document.createElement("div");
+      item.textContent = `${time}: ${entry}`;
+      log.prepend(item);
     }
 
-    // Initial rendering from localStorage
-    updateFriendSelectors();
-    renderFriends();
-    renderHistory();
-    displayDebts();
+    function resetAll() {
+      friends.forEach(f => f.balance = 0);
+      document.getElementById("history").innerHTML = "";
+      renderFriends();
+      displayDebts();
+    }
   </script>
 </body>
 </html>
