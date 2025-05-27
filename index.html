@@ -1,1193 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yarri Khata</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        /* Global styles for body and root element */
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            min-height: 100vh;
-            background: linear-gradient(to bottom right, #111827, #1f2937); /* bg-gray-900 to gray-800 equivalent */
-            color: #e5e7eb; /* text-gray-200 equivalent */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 32px 16px; /* py-8 px-4 equivalent */
-            box-sizing: border-box; /* Include padding in element's total width and height */
-        }
-        #app {
-            width: 100%;
-            max-width: 448px; /* max-w-md equivalent */
-            background: #1f2937; /* bg-gray-800 equivalent */
-            border-radius: 24px; /* rounded-3xl equivalent */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl equivalent */
-            padding: 40px; /* p-10 equivalent */
-            border: 1px solid #374151; /* border-gray-700 equivalent */
-            box-sizing: border-box;
-        }
-
-        h1 {
-            font-size: 3rem; /* text-5xl equivalent */
-            font-weight: 800; /* font-extrabold equivalent */
-            text-align: center;
-            color: #ffffff; /* text-white equivalent */
-            margin-bottom: 40px; /* mb-10 equivalent */
-            letter-spacing: -0.025em; /* tracking-tight equivalent */
-        }
-
-        section {
-            margin-bottom: 40px; /* mb-10 equivalent */
-            padding: 24px; /* p-6 equivalent */
-            background: #374151; /* bg-gray-700 equivalent */
-            border-radius: 16px; /* rounded-2xl equivalent */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg equivalent */
-            border: 1px solid #4b5563; /* border-gray-600 equivalent */
-            transition: transform 0.3s ease-in-out; /* transform hover:scale-[1.01] transition-transform duration-300 ease-in-out */
-            /* Added for tabbed view */
-            display: none; /* Hidden by default */
-        }
-        section.active-section {
-            display: block; /* Show active section */
-        }
-        section:hover {
-            transform: scale(1.01);
-        }
-
-        h2 {
-            font-size: 2rem; /* text-3xl equivalent */
-            font-weight: 700; /* font-bold equivalent */
-            text-align: center;
-            margin-bottom: 24px; /* mb-6 equivalent */
-        }
-
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 16px; /* p-4 equivalent */
-            border: 1px solid #4b5563; /* border-gray-600 equivalent */
-            border-radius: 12px; /* rounded-xl equivalent */
-            outline: none;
-            background: #111827; /* bg-gray-900 equivalent */
-            color: #e5e7eb; /* text-gray-200 equivalent */
-            font-size: 1.125rem; /* text-lg equivalent */
-            transition: all 0.2s;
-        }
-        input[type="text"]::placeholder, input[type="number"]::placeholder {
-            color: #9ca3af; /* placeholder-gray-400 equivalent */
-        }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus {
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5); /* focus:ring-4 focus:ring-blue-500 equivalent */
-        }
-
-        button {
-            padding: 16px 32px; /* px-8 py-4 equivalent */
-            font-weight: 600; /* font-semibold equivalent */
-            border-radius: 12px; /* rounded-xl equivalent */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md equivalent */
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-        button:hover {
-            transform: scale(1.05);
-        }
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Specific button styles */
-        .btn-blue {
-            background: #3b82f6; /* bg-blue-600 */
-            color: #ffffff; /* text-white */
-        }
-        .btn-blue:hover {
-            background: #2563eb; /* hover:bg-blue-700 */
-        }
-        .btn-green {
-            background: #10b981; /* bg-green-600 */
-            color: #ffffff;
-        }
-        .btn-green:hover {
-            background: #059669; /* hover:bg-green-700 */
-        }
-        .btn-red {
-            background: #ef4444; /* bg-red-600 */
-            color: #ffffff;
-        }
-        .btn-red:hover {
-            background: #dc2626; /* hover:bg-red-700 */
-        }
-        .btn-gray {
-            background: #4b5563; /* bg-gray-600 */
-            color: #d1d5db; /* text-gray-300 */
-        }
-        .btn-gray:hover {
-            background: #374151; /* hover:bg-gray-700 */
-        }
-        .btn-small {
-            padding: 8px 12px; /* px-3 py-2 */
-            font-size: 0.875rem; /* text-sm */
-            border-radius: 8px; /* rounded-lg */
-            margin-left: 8px; /* ml-2 */
-            box-shadow: none;
-            transition: none;
-        }
-        .btn-small:hover {
-            transform: none;
-        }
-
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex; /* Changed to flex for better button alignment */
-            flex-wrap: wrap; /* Allow wrapping */
-            gap: 16px; /* gap-4 equivalent */
-            margin-top: 24px; /* mt-6 equivalent */
-        }
-        ul li {
-            background: #111827; /* bg-gray-900 equivalent */
-            padding: 16px; /* p-4 equivalent */
-            border-radius: 12px; /* rounded-xl equivalent */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md equivalent */
-            color: #93c5fd; /* text-blue-300 equivalent */
-            font-weight: 500; /* font-medium equivalent */
-            text-align: center;
-            font-size: 1.125rem; /* text-lg equivalent */
-            border: 1px solid #4b5563; /* border-gray-600 equivalent */
-            transition: all 0.2s;
-            flex-grow: 1; /* Allow items to grow */
-            display: flex; /* For aligning name and button */
-            justify-content: space-between; /* Space out name and button */
-            align-items: center;
-        }
-        ul li:hover {
-            background: #374151; /* hover:bg-gray-700 */
-            transform: scale(1.01); /* Slightly smaller scale for list items with buttons */
-        }
-
-        .info-message {
-            color: #9ca3af; /* text-gray-400 equivalent */
-            font-style: italic;
-            text-align: center;
-            font-size: 1.125rem; /* text-lg equivalent */
-            margin-top: 16px; /* mt-4 equivalent */
-        }
-
-        .error-message {
-            background: rgba(127, 29, 29, 0.3); /* bg-red-900/30 equivalent */
-            border: 1px solid #b91c1c; /* border-red-700 equivalent */
-            color: #fca5a5; /* text-red-300 equivalent */
-            padding: 16px 24px; /* px-6 py-4 equivalent */
-            border-radius: 12px; /* rounded-xl equivalent */
-            position: relative;
-            font-size: 1.125rem; /* text-lg equivalent */
-            font-weight: 500; /* font-medium equivalent */
-            margin-bottom: 24px; /* mb-6 equivalent */
-        }
-        .error-message strong {
-            font-weight: bold;
-        }
-        .error-message span {
-            display: block; /* block sm:inline equivalent */
-        }
-
-        .success-message {
-            background: rgba(16, 185, 129, 0.3); /* bg-green-900/30 equivalent */
-            border: 1px solid #059669; /* border-green-700 equivalent */
-            color: #a7f3d0; /* text-green-300 equivalent */
-            padding: 16px 24px; /* px-6 py-4 equivalent */
-            border-radius: 12px; /* rounded-xl equivalent */
-            position: relative;
-            font-size: 1.125rem; /* text-lg equivalent */
-            font-weight: 500; /* font-medium equivalent */
-            margin-bottom: 24px; /* mb-6 equivalent */
-            text-align: center;
-            display: none; /* Hidden by default */
-        }
-
-        .expense-item, .balance-item, .payment-item {
-            background: #111827; /* bg-gray-900 equivalent */
-            padding: 12px; /* p-3 equivalent - smaller padding */
-            border-radius: 8px; /* rounded-lg equivalent - smaller radius */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm equivalent - smaller shadow */
-            border: 1px solid #4b5563; /* border-gray-600 equivalent */
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 8px; /* mb-2 for list items */
-        }
-        .expense-item:last-child, .balance-item:last-child, .payment-item:last-child {
-            margin-bottom: 0; /* No margin for last item in list */
-        }
-        .expense-item:hover, .balance-item:hover, .payment-item:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* hover:shadow-md */
-            transform: scale(1.005); /* Smaller hover scale */
-        }
-
-        .expense-item p:first-of-type {
-            font-size: 1rem; /* text-base equivalent - smaller font */
-            font-weight: 600; /* font-semibold equivalent */
-            color: #e5e7eb; /* text-gray-100 equivalent */
-            margin-bottom: 4px; /* mb-1 equivalent */
-        }
-        .expense-item p span {
-            font-weight: 700; /* font-bold equivalent */
-        }
-        .expense-item p:nth-of-type(2), .expense-item p:nth-of-type(3) {
-            font-size: 0.875rem; /* text-sm equivalent - smaller font */
-            color: #d1d5db; /* text-gray-300 equivalent */
-            margin-bottom: 2px; /* mb-0.5 equivalent */
-        }
-        .expense-item p:nth-of-type(2) span, .expense-item p:nth-of-type(3) span {
-            font-weight: 500; /* font-medium equivalent */
-        }
-        .expense-item p:last-of-type {
-            font-size: 0.75rem; /* text-xs equivalent - smaller font */
-            color: #9ca3af; /* text-gray-400 equivalent */
-            margin-top: 4px; /* mt-1 equivalent */
-        }
-        .expense-actions {
-            display: flex;
-            justify-content: flex-end; /* Align buttons to the right */
-            gap: 4px; /* Smaller space between buttons */
-            margin-top: 8px; /* mt-2 */
-        }
-        .balance-item p {
-            font-size: 1rem; /* text-base equivalent - smaller font */
-            color: #e5e7eb; /* text-gray-100 equivalent */
-        }
-        .balance-item p span {
-            font-weight: 600; /* font-semibold equivalent */
-        }
-        .balance-item p .amount-owed {
-            font-weight: 700; /* font-bold equivalent */
-            color: #f87171; /* text-red-400 equivalent */
-        }
-
-        .payment-item {
-            margin-bottom: 8px; /* mb-2 */
-            font-size: 0.875rem; /* text-sm */
-            color: #d1d5db; /* text-gray-300 */
-            padding: 12px;
-            border-radius: 8px;
-            background: #111827;
-            border: 1px solid #4b5563;
-        }
-        .payment-item strong {
-            color: #a7f3d0; /* text-green-300 */
-        }
-        .payment-item span {
-            color: #93c5fd; /* text-blue-300 */
-        }
-
-
-        /* Specific text colors for sections */
-        .friends-h2 { color: #60a5fa; } /* text-blue-400 */
-        .expenses-h2 { color: #4ade80; } /* text-green-400 */
-        .all-expenses-h2 { color: #facc15; } /* text-yellow-400 */
-        .balances-h2 { color: #c084fc; } /* text-purple-400 */
-        .payment-h2 { color: #f9a8d4; } /* text-pink-300 */
-
-        .expense-amount-text { color: #4ade80; } /* text-green-400 */
-        .payer-participant-text { color: #facc15; } /* text-yellow-400 */
-
-        /* Navigation Bar Styles */
-        nav {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping on small screens */
-            justify-content: center;
-            gap: 8px; /* gap-2 */
-            margin-bottom: 32px; /* mb-8 */
-            background: #374151; /* bg-gray-700 */
-            border-radius: 12px; /* rounded-xl */
-            padding: 8px; /* p-2 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* shadow-md */
-        }
-        nav button {
-            flex: 1; /* Allow buttons to grow */
-            min-width: 100px; /* Minimum width for buttons */
-            padding: 12px 16px; /* px-4 py-3 */
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 600; /* font-semibold */
-            border-radius: 8px; /* rounded-lg */
-            background: transparent;
-            color: #d1d5db; /* text-gray-300 */
-            transition: all 0.2s;
-            box-shadow: none; /* Remove default button shadow */
-        }
-        nav button:hover {
-            background: #4b5563; /* hover:bg-gray-600 */
-            color: #e5e7eb; /* hover:text-gray-200 */
-            transform: none; /* No scale on nav buttons hover */
-        }
-        nav button.active-tab {
-            background: #3b82f6; /* bg-blue-600 */
-            color: #ffffff; /* text-white */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* shadow-md */
-        }
-        nav button.active-tab:hover {
-            background: #2563eb; /* hover:bg-blue-700 */
-        }
-
-        /* Scrollable containers for lists */
-        .scrollable-list {
-            max-height: 250px; /* Fixed height for scrollable lists */
-            overflow-y: auto;
-            padding-right: 8px; /* Space for scrollbar */
-        }
-        /* Custom scrollbar for scrollable lists */
-        .scrollable-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scrollable-list::-webkit-scrollbar-track {
-            background: #374151; /* gray-700 */
-            border-radius: 4px;
-        }
-        .scrollable-list::-webkit-scrollbar-thumb {
-            background: #60a5fa; /* blue-400 */
-            border-radius: 4px;
-        }
-        .scrollable-list::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6; /* blue-500 */
-        }
-    </style>
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script>
-      // Your web app's Firebase configuration (COPY FROM YOUR CONSOLE)
-      const firebaseConfig = {
-        apiKey: "AIzaSyBIqVfI6aG6EdVi1jiPOSYmA3u05FtFveo",
-        authDomain: "yarri-khatta.firebaseapp.com",
-        projectId: "yarri-khatta",
-        storageBucket: "yarri-khatta.firebasestorage.app",
-        messagingSenderId: "693204826023",
-        appId: "1:693204826023:web:bf118538a4a722c8192882",
-        measurementId: "G-BM4E4VR28R" // Optional, for Google Analytics
-      };
-
-      // Initialize Firebase app
-      firebase.initializeApp(firebaseConfig);
-
-      // Get a reference to the Firestore service
-      const db = firebase.firestore();
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friend Expense Splitter</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+    }
+    .section {
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #1e1e1e;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    input, select {
+      background-color: #2a2a2a;
+      color: #ffffff;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .friend {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+    .scroll-area {
+      max-height: 150px;
+      overflow-y: auto;
+      background-color: #2a2a2a;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .debt {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+  </style>
 </head>
 <body>
-    <div id="app">
-        <h1 style="font-size: 3rem; font-weight: 800; text-align: center; color: #ffffff; margin-bottom: 40px; letter-spacing: -0.025em;">
-            Yarri Khata
-        </h1>
+  <div class="container">
+    <h1>Friend Expense Splitter</h1>
 
-        <nav id="mainNav">
-            <button class="nav-btn active-tab" data-target="friendsSection">Friends</button>
-            <button class="nav-btn" data-target="addExpenseSection">Add Expense</button>
-            <button class="nav-btn" data-target="recordPaymentSection">Record Payment</button>
-            <button class="nav-btn" data-target="allExpensesSection">All Expenses</button>
-            <button class="nav-btn" data-target="balancesSection">Balances</button>
-        </nav>
-
-        <section id="friendsSection" class="active-section">
-            <h2 class="friends-h2">Friends</h2>
-            <form id="addFriendForm" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
-                <input
-                    type="text"
-                    id="friendNameInput"
-                    placeholder="Enter friend's name"
-                />
-                <button type="submit" class="btn-blue">
-                    Add Friend
-                </button>
-            </form>
-            <ul id="friendList">
-                </ul>
-            <p id="noFriendsMessage" class="info-message" style="display: none;">No friends added yet. Add some above!</p>
-        </section>
-
-        <section id="addExpenseSection">
-            <h2 class="expenses-h2">Add New Expense</h2>
-            <div id="expenseErrorMessage" class="error-message" style="display: none;" role="alert">
-                <strong>Error!</strong>
-                <span id="expenseErrorText"></span>
-            </div>
-            <div id="expenseSuccessMessage" class="success-message" style="display: none;">
-                <strong>Success!</strong> Expense added.
-            </div>
-            <p id="addExpenseInfoMessage" class="info-message" style="display: none; color: #fca5a5;">Please add friends first before adding expenses.</p>
-
-            <form id="addExpenseForm" style="display: flex; flex-direction: column; gap: 24px;">
-                <div>
-                    <label for="descriptionInput" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Description:</label>
-                    <input type="text" id="expenseDescriptionInput" placeholder="e.g., Dinner at Italian place" />
-                </div>
-
-                <div>
-                    <label for="amountInput" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Amount (PKR):</label>
-                    <input type="number" id="expenseAmountInput" placeholder="e.g., 50.00" min="0.01" step="0.01" />
-                </div>
-
-                <div>
-                    <label for="payerSelect" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Who paid?</label>
-                    <select id="payerSelect">
-                        <option value="">Select Payer</option>
-                        </select>
-                </div>
-
-                <div>
-                    <label style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Who participated?</label>
-                    <div id="participantCheckboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px;">
-                        </div>
-                </div>
-
-                <div style="display: flex; gap: 16px; justify-content: flex-end;">
-                    <button type="button" id="cancelEditExpenseBtn" class="btn-gray" style="display: none;">Cancel Edit</button>
-                    <button type="submit" id="submitExpenseBtn" class="btn-green">
-                        Add Expense
-                    </button>
-                </div>
-            </form>
-        </section>
-
-        <section id="recordPaymentSection">
-            <h2 class="payment-h2">Record a Payment</h2>
-            <div id="paymentErrorMessage" class="error-message" style="display: none;" role="alert">
-                <strong>Error!</strong>
-                <span id="paymentErrorText"></span>
-            </div>
-            <div id="paymentSuccessMessage" class="success-message" style="display: none;">
-                <strong>Success!</strong> Payment recorded.
-            </div>
-            <form id="recordPaymentForm" style="display: flex; flex-direction: column; gap: 16px;">
-                <div>
-                    <label for="payerPaymentSelect" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Payer (Who paid?):</label>
-                    <select id="payerPaymentSelect">
-                        <option value="">Select Payer</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="receiverPaymentSelect" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Receiver (Who received?):</label>
-                    <select id="receiverPaymentSelect">
-                        <option value="">Select Receiver</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="paymentAmountInput" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Amount (PKR):</label>
-                    <input type="number" id="paymentAmountInput" placeholder="e.g., 25.00" min="0.01" step="0.01" />
-                </div>
-                <button type="submit" class="btn-blue">Record Payment</button>
-            </form>
-            <h3 style="color: #f9a8d4; font-size: 1.5rem; font-weight: 600; margin-top: 32px; text-align: center;">Payment History</h3>
-            <div id="paymentHistory" class="scrollable-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-                <p class="info-message" id="noPaymentsMessage" style="display: none;">No payments recorded yet.</p>
-            </div>
-        </section>
-
-        <section id="allExpensesSection">
-            <h2 class="all-expenses-h2">All Expenses</h2>
-            <div id="expenseList" class="scrollable-list" style="display: flex; flex-direction: column; gap: 16px;">
-                </div>
-            <p id="noExpensesMessage" class="info-message" style="display: none;">No expenses added yet. Add some above!</p>
-        </section>
-
-        <section id="balancesSection">
-            <h2 class="balances-h2">Balances to Settle</h2>
-            <div id="balanceSummary" class="scrollable-list" style="display: flex; flex-direction: column; gap: 16px;">
-                </div>
-            <p id="noBalancesMessage" class="info-message" style="display: none;">No balances to settle yet. Add some expenses or record payments!</p>
-        </section>
+    <div class="section">
+      <h2>Add Friend</h2>
+      <input id="friendName" placeholder="Enter friend's name" />
+      <button onclick="addFriend()">Add Friend</button>
+      <div id="friendList"></div>
     </div>
 
-    <script>
-        // --- State Variables ---
-        let friends = [];
-        let expenses = [];
-        let payments = []; // New array for payments
-        let editingExpenseId = null; // To track which expense is being edited
+    <div class="section">
+      <h2>Add Expense</h2>
+      <input id="expenseAmount" type="number" placeholder="Amount paid" />
+      <select id="expensePayer"></select>
+      <button onclick="addExpense()">Split Expense</button>
+    </div>
 
-        // --- DOM Elements ---
-        const mainNav = document.getElementById('mainNav'); // New
-        const sections = document.querySelectorAll('section'); // New
+    <div class="section">
+      <h2>Settle Debt</h2>
+      <label for="settlePayer">Who is paying:</label>
+      <select id="settlePayer"></select>
+      <label for="settleReceiver">Who is receiving:</label>
+      <select id="settleReceiver"></select>
+      <input id="settleAmount" type="number" placeholder="Amount to settle" />
+      <button onclick="settleDebt()">Settle</button>
+    </div>
 
-        const friendNameInput = document.getElementById('friendNameInput');
-        const addFriendForm = document.getElementById('addFriendForm');
-        const friendListEl = document.getElementById('friendList');
-        const noFriendsMessageEl = document.getElementById('noFriendsMessage');
+    <div class="section">
+      <h2>Who Owes Whom</h2>
+      <select id="debtFilter" onchange="displayDebts()"></select>
+      <div id="debtList"></div>
+    </div>
 
-        const expenseDescriptionInput = document.getElementById('expenseDescriptionInput');
-        const expenseAmountInput = document.getElementById('expenseAmountInput');
-        const payerSelect = document.getElementById('payerSelect');
-        const participantCheckboxes = document.getElementById('participantCheckboxes');
-        const addExpenseForm = document.getElementById('addExpenseForm');
-        const expenseErrorMessageEl = document.getElementById('expenseErrorMessage');
-        const expenseErrorTextEl = document.getElementById('expenseErrorText');
-        const expenseSuccessMessageEl = document.getElementById('expenseSuccessMessage'); // New
-        const addExpenseInfoMessageEl = document.getElementById('addExpenseInfoMessage');
-        const submitExpenseBtn = document.getElementById('submitExpenseBtn'); // New
-        const cancelEditExpenseBtn = document.getElementById('cancelEditExpenseBtn'); // New
+    <div class="section">
+      <h2>Transaction History</h2>
+      <div class="scroll-area" id="history"></div>
+    </div>
+  </div>
 
-        const expenseListEl = document.getElementById('expenseList');
-        const noExpensesMessageEl = document.getElementById('noExpensesMessage');
+  <script>
+    let friends = JSON.parse(localStorage.getItem('friends')) || [];
+    let historyEntries = JSON.parse(localStorage.getItem('history')) || [];
 
-        const balanceSummaryEl = document.getElementById('balanceSummary');
-        const noBalancesMessageEl = document.getElementById('noBalancesMessage');
+    function saveData() {
+      localStorage.setItem('friends', JSON.stringify(friends));
+      localStorage.setItem('history', JSON.stringify(historyEntries));
+    }
 
-        // Payment Elements (New)
-        const recordPaymentForm = document.getElementById('recordPaymentForm');
-        const payerPaymentSelect = document.getElementById('payerPaymentSelect');
-        const receiverPaymentSelect = document.getElementById('receiverPaymentSelect');
-        const paymentAmountInput = document.getElementById('paymentAmountInput');
-        const paymentErrorMessageEl = document.getElementById('paymentErrorMessage');
-        const paymentErrorTextEl = document.getElementById('paymentErrorText');
-        const paymentSuccessMessageEl = document.getElementById('paymentSuccessMessage');
-        const paymentHistoryEl = document.getElementById('paymentHistory');
-        const noPaymentsMessageEl = document.getElementById('noPaymentsMessage');
-
-
-        // --- Helper Functions ---
-
-        /**
-         * Gets a friend's name by their ID.
-         * @param {string} id - The Firestore document ID of the friend.
-         * @returns {string} The friend's name or 'Unknown'.
-         */
-        function getFriendName(id) {
-            const friend = friends.find(f => f.id === id);
-            return friend ? friend.name : `Unknown (${id})`;
-        }
-
-        /**
-         * Shows a temporary success message.
-         * @param {HTMLElement} element - The success message element to show.
-         */
-        function showMessage(element, isSuccess, message) {
-            element.textContent = message;
-            element.style.display = 'block';
-            element.className = isSuccess ? 'success-message' : 'error-message';
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 3000); // Hide after 3 seconds
-        }
-
-        /**
-         * Calculates the balances between friends based on all recorded expenses AND payments.
-         * @returns {Array<object>} An array of objects showing who owes whom.
-         */
-        function calculateBalances() {
-            const netBalances = {};
-            friends.forEach(friend => {
-                netBalances[friend.id] = 0;
-            });
-
-            expenses.forEach(expense => {
-                const { amount, payerId, participantIds } = expense;
-                // Payer gets credit for the full amount
-                if (netBalances[payerId] !== undefined) { // Ensure payer exists
-                    netBalances[payerId] += amount;
-                }
-
-                // Each participant owes their share
-                const sharePerParticipant = participantIds.length > 0 ? amount / participantIds.length : 0;
-                participantIds.forEach(participantId => {
-                    if (netBalances[participantId] !== undefined) { // Ensure participant exists
-                        netBalances[participantId] -= sharePerParticipant;
-                    }
-                });
-            });
-
-            // Adjust balances based on direct payments
-            payments.forEach(payment => {
-                const { payerId, receiverId, amount } = payment;
-                if (netBalances[payerId] !== undefined) {
-                     netBalances[payerId] -= amount; // Payer's balance decreases (they paid)
-                }
-                if (netBalances[receiverId] !== undefined) {
-                     netBalances[receiverId] += amount; // Receiver's balance increases (they received)
-                }
-            });
-
-
-            const balancesToSettle = [];
-            // Filter out friends who might have been deleted but still exist in transactions
-            const activeFriendIds = Object.keys(netBalances).filter(id => friends.some(f => f.id === id));
-            const sortedFriendIds = activeFriendIds.sort((a, b) => netBalances[a] - netBalances[b]);
-
-            let i = 0;
-            let j = sortedFriendIds.length - 1;
-
-            const EPSILON = 0.01; // Tolerance for floating point comparisons
-
-            while (i < j) {
-                const debtorId = sortedFriendIds[i];
-                const creditorId = sortedFriendIds[j];
-
-                // Skip if current debtor/creditor is no longer valid or their balance is effectively zero
-                if (Math.abs(netBalances[debtorId]) < EPSILON) {
-                    i++;
-                    continue;
-                }
-                if (netBalances[creditorId] < EPSILON) { // Creditor should have positive balance
-                    j--;
-                    continue;
-                }
-
-                const debtorName = getFriendName(debtorId);
-                const creditorName = getFriendName(creditorId);
-
-                const debt = Math.abs(netBalances[debtorId]);
-                const credit = netBalances[creditorId];
-
-                const settlementAmount = Math.min(debt, credit);
-
-                if (settlementAmount > EPSILON) {
-                    balancesToSettle.push({
-                        from: debtorName,
-                        to: creditorName,
-                        amount: settlementAmount.toFixed(2),
-                    });
-
-                    netBalances[debtorId] += settlementAmount; // Debtor pays, their balance moves towards 0
-                    netBalances[creditorId] -= settlementAmount; // Creditor receives, their balance moves towards 0
-                }
-
-                // Move pointers if balances are settled
-                if (Math.abs(netBalances[debtorId]) < EPSILON) {
-                    i++;
-                }
-                if (netBalances[creditorId] < EPSILON) {
-                    j--;
-                }
-            }
-            return balancesToSettle;
-        }
-
-        // --- Render Functions ---
-
-        /**
-         * Renders the list of friends.
-         */
-        function renderFriendList() {
-            friendListEl.innerHTML = ''; // Clear existing list
-            if (friends.length === 0) {
-                noFriendsMessageEl.style.display = 'block';
-            } else {
-                noFriendsMessageEl.style.display = 'none';
-                friends.forEach(friend => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <span>${friend.name}</span>
-                        <button class="btn-red btn-small delete-friend-btn" data-id="${friend.id}">Delete</button>
-                    `;
-                    friendListEl.appendChild(li);
-                });
-            }
-        }
-
-        /**
-         * Renders the payer select dropdown and participant checkboxes for the expense form.
-         * Also renders selects for the payment form.
-         */
-        function renderFriendSelects() {
-            payerSelect.innerHTML = '<option value="">Select Payer</option>';
-            payerPaymentSelect.innerHTML = '<option value="">Select Payer</option>'; // For payment form
-            receiverPaymentSelect.innerHTML = '<option value="">Select Receiver</option>'; // For payment form
-            participantCheckboxes.innerHTML = '';
-
-            if (friends.length === 0) {
-                addExpenseForm.style.display = 'none';
-                addExpenseInfoMessageEl.style.display = 'block';
-                recordPaymentForm.style.display = 'none'; // Hide payment form if no friends
-                return;
-            } else {
-                addExpenseForm.style.display = 'flex';
-                addExpenseInfoMessageEl.style.display = 'none';
-                recordPaymentForm.style.display = 'flex'; // Show payment form if friends exist
-            }
-
-            friends.forEach(friend => {
-                // Add to expense payer select
-                const optionPayer = document.createElement('option');
-                optionPayer.value = friend.id; // Use Firestore document ID
-                optionPayer.textContent = friend.name;
-                payerSelect.appendChild(optionPayer);
-
-                // Add to payment payer select
-                const optionPaymentPayer = document.createElement('option');
-                optionPaymentPayer.value = friend.id;
-                optionPaymentPayer.textContent = friend.name;
-                payerPaymentSelect.appendChild(optionPaymentPayer);
-
-                // Add to payment receiver select
-                const optionPaymentReceiver = document.createElement('option');
-                optionPaymentReceiver.value = friend.id;
-                optionPaymentReceiver.textContent = friend.name;
-                receiverPaymentSelect.appendChild(optionPaymentReceiver);
-
-                // Add to participant checkboxes
-                const div = document.createElement('div');
-                div.style.display = 'flex';
-                div.style.alignItems = 'center';
-                div.style.background = '#111827'; /* bg-gray-900 */
-                div.style.padding = '12px'; /* p-3 */
-                div.style.borderRadius = '8px'; /* rounded-lg */
-                div.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'; /* shadow-sm */
-                div.style.border = '1px solid #4b5563'; /* border-gray-600 */
-
-                const input = document.createElement('input');
-                input.type = 'checkbox';
-                input.id = `participant-${friend.id}`;
-                input.value = friend.id; // Use Firestore document ID
-                input.style.marginRight = '12px'; /* mr-3 */
-                input.style.height = '20px'; /* h-5 */
-                input.style.width = '20px'; /* w-5 */
-                input.style.color = '#34d399'; /* text-green-500 */
-                input.style.borderColor = '#9ca3af'; /* border-gray-500 */
-                input.style.borderRadius = '6px'; /* rounded-md */
-                input.style.cursor = 'pointer';
-                input.style.backgroundColor = '#374151'; /* bg-gray-700 */
-                input.classList.add('participant-checkbox'); // Add class for easier selection
-
-                const label = document.createElement('label');
-                label.htmlFor = `participant-${friend.id}`;
-                label.textContent = friend.name;
-                label.style.color = '#e5e7eb'; /* text-gray-200 */
-                label.style.fontSize = '1.125rem'; /* text-lg */
-                label.style.cursor = 'pointer';
-
-                div.appendChild(input);
-                div.appendChild(label);
-                participantCheckboxes.appendChild(div);
-            });
-        }
-
-
-        /**
-         * Renders the list of expenses.
-         */
-        function renderExpenseList() {
-            expenseListEl.innerHTML = '';
-            if (expenses.length === 0) {
-                noExpensesMessageEl.style.display = 'block';
-            } else {
-                noExpensesMessageEl.style.display = 'none';
-                // Sort records by date in descending order (newest first)
-                [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(expense => {
-                    const expenseDiv = document.createElement('div');
-                    expenseDiv.className = 'expense-item'; // Apply class for styling
-                    expenseDiv.innerHTML = `
-                        <p style="font-size: 1rem; font-weight: 600; color: #e5e7eb; margin-bottom: 4px;">
-                            ${expense.description} - <span style="color: #4ade80; font-weight: 700;">PKR ${expense.amount.toFixed(2)}</span>
-                        </p>
-                        <p style="font-size: 0.875rem; color: #d1d5db; margin-bottom: 2px;">
-                            Paid by: <span style="font-weight: 500; color: #facc15;">${getFriendName(expense.payerId)}</span>
-                        </p>
-                        <p style="font-size: 0.875rem; color: #d1d5db; margin-bottom: 2px;">
-                            Participants: <span style="font-weight: 500; color: #facc15;">
-                                ${expense.participantIds.map(id => getFriendName(id)).join(', ')}
-                            </span>
-                        </p>
-                        <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 4px;">
-                            Date: ${expense.date}
-                        </p>
-                        <div class="expense-actions">
-                            <button class="btn-gray btn-small edit-expense-btn" data-id="${expense.id}">Edit</button>
-                            <button class="btn-red btn-small delete-expense-btn" data-id="${expense.id}">Delete</button>
-                        </div>
-                    `;
-                    expenseListEl.appendChild(expenseDiv);
-                });
-            }
-        }
-
-        /**
-         * Renders the list of payments.
-         */
-        function renderPaymentHistory() {
-            paymentHistoryEl.innerHTML = '';
-            if (payments.length === 0) {
-                noPaymentsMessageEl.style.display = 'block';
-            } else {
-                noPaymentsMessageEl.style.display = 'none';
-                [...payments].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(payment => {
-                    const paymentDiv = document.createElement('div');
-                    paymentDiv.className = 'payment-item';
-                    paymentDiv.innerHTML = `
-                        <p><span style="color: #93c5fd;">${getFriendName(payment.payerId)}</span> paid <strong>PKR ${payment.amount.toFixed(2)}</strong> to <span style="color: #93c5fd;">${getFriendName(payment.receiverId)}</span> on ${payment.date}</p>
-                        <div class="expense-actions">
-                            <button class="btn-red btn-small delete-payment-btn" data-id="${payment.id}">Delete</button>
-                        </div>
-                    `;
-                    paymentHistoryEl.appendChild(paymentDiv);
-                });
-            }
-        }
-
-        /**
-         * Renders the balance summary.
-         */
-        function renderBalanceSummary() {
-            balanceSummaryEl.innerHTML = '';
-            const balances = calculateBalances();
-            if (balances.length === 0 && friends.length > 0) { // Show message if no balances but friends exist
-                noBalancesMessageEl.style.display = 'block';
-            } else if (friends.length === 0) { // Also show if no friends at all
-                noBalancesMessageEl.style.display = 'block';
-                noBalancesMessageEl.textContent = "Add friends and expenses to see balances.";
-            } else {
-                noBalancesMessageEl.style.display = 'none';
-                balances.forEach(balance => {
-                    const balanceDiv = document.createElement('div');
-                    balanceDiv.className = 'balance-item'; // Apply class for styling
-                    balanceDiv.innerHTML = `
-                        <p style="font-size: 1rem; color: #e5e7eb;">
-                            <span style="font-weight: 600; color: #c084fc;">${balance.from}</span> owes
-                            <span style="font-weight: 600; color: #c084fc;">${balance.to}</span>
-                            <span style="font-weight: 700; color: #f87171;" class="amount-owed">PKR ${balance.amount}</span>
-                        </p>
-                    `;
-                    balanceSummaryEl.appendChild(balanceDiv);
-                });
-            }
-        }
-
-        /**
-         * Main function to update all UI sections.
-         */
-        function updateUI() {
-            renderFriendList();
-            renderFriendSelects(); // Updates payer/receiver dropdowns and checkboxes
-            renderExpenseList();
-            renderPaymentHistory();
-            renderBalanceSummary();
-        }
-
-        // --- Firebase Operations ---
-
-        /**
-         * Deletes a friend from Firestore.
-         * @param {string} friendId - The ID of the friend document to delete.
-         */
-        async function deleteFriend(friendId) {
-            if (!confirm('Are you sure you want to delete this friend? This will not remove them from existing expenses or payments, but their name will show as "Unknown".')) {
-                return;
-            }
-            try {
-                await db.collection('friends').doc(friendId).delete();
-                console.log("Friend deleted successfully!");
-                showMessage(expenseSuccessMessageEl, true, 'Success! Friend deleted.'); // Using existing success element
-            } catch (error) {
-                console.error("Error deleting friend: ", error);
-                showMessage(expenseErrorMessageEl, false, `Error deleting friend: ${error.message}`); // Using existing error element
-            }
-        }
-
-        /**
-         * Deletes an expense from Firestore.
-         * @param {string} expenseId - The ID of the expense document to delete.
-         */
-        async function deleteExpense(expenseId) {
-            if (!confirm('Are you sure you want to delete this expense?')) {
-                return;
-            }
-            try {
-                await db.collection('expenses').doc(expenseId).delete();
-                console.log("Expense deleted successfully!");
-                showMessage(expenseSuccessMessageEl, true, 'Success! Expense deleted.');
-            } catch (error) {
-                console.error("Error deleting expense: ", error);
-                showMessage(expenseErrorMessageEl, false, `Error deleting expense: ${error.message}`);
-            }
-        }
-
-        /**
-         * Handles the edit expense functionality.
-         * @param {string} expenseId - The ID of the expense to edit.
-         */
-        function populateExpenseFormForEdit(expenseId) {
-            const expenseToEdit = expenses.find(exp => exp.id === expenseId);
-            if (!expenseToEdit) {
-                showMessage(expenseErrorMessageEl, false, 'Expense not found for editing!');
-                return;
-            }
-
-            editingExpenseId = expenseId;
-            expenseDescriptionInput.value = expenseToEdit.description;
-            expenseAmountInput.value = expenseToEdit.amount;
-            payerSelect.value = expenseToEdit.payerId;
-
-            // Uncheck all participants first
-            document.querySelectorAll('.participant-checkbox').forEach(cb => cb.checked = false);
-            // Then check the participants for the current expense
-            expenseToEdit.participantIds.forEach(participantId => {
-                const checkbox = document.getElementById(`participant-${participantId}`);
-                if (checkbox) checkbox.checked = true;
-            });
-
-            submitExpenseBtn.textContent = 'Update Expense';
-            submitExpenseBtn.classList.remove('btn-green');
-            submitExpenseBtn.classList.add('btn-blue');
-            cancelEditExpenseBtn.style.display = 'inline-block'; // Show cancel button
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top for form
-            showSection('addExpenseSection'); // Switch to Add Expense tab
-        }
-
-        /**
-         * Resets the expense form after editing or adding.
-         */
-        function resetExpenseForm() {
-            editingExpenseId = null;
-            expenseDescriptionInput.value = '';
-            expenseAmountInput.value = '';
-            payerSelect.value = '';
-            document.querySelectorAll('.participant-checkbox').forEach(cb => cb.checked = false);
-            submitExpenseBtn.textContent = 'Add Expense';
-            submitExpenseBtn.classList.remove('btn-blue');
-            submitExpenseBtn.classList.add('btn-green');
-            cancelEditExpenseBtn.style.display = 'none'; // Hide cancel button
-            expenseErrorMessageEl.style.display = 'none';
-            expenseSuccessMessageEl.style.display = 'none';
-        }
-
-        /**
-         * Deletes a payment from Firestore.
-         * @param {string} paymentId - The ID of the payment document to delete.
-         */
-        async function deletePayment(paymentId) {
-            if (!confirm('Are you sure you want to delete this payment?')) {
-                return;
-            }
-            try {
-                await db.collection('payments').doc(paymentId).delete();
-                console.log("Payment deleted successfully!");
-                showMessage(paymentSuccessMessageEl, true, 'Success! Payment deleted.');
-            } catch (error) {
-                console.error("Error deleting payment: ", error);
-                showMessage(paymentErrorMessageEl, false, `Error deleting payment: ${error.message}`);
-            }
-        }
-
-
-        // --- Event Listeners ---
-
-        addFriendForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = friendNameInput.value.trim();
-            if (name) {
-                try {
-                    // Check if friend already exists to avoid duplicates
-                    const existingFriend = friends.find(f => f.name.toLowerCase() === name.toLowerCase());
-                    if (existingFriend) {
-                        showMessage(expenseErrorMessageEl, false, "Friend with this name already exists!"); // Re-use error message
-                        return;
-                    }
-                    await db.collection('friends').add({ name: name, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    friendNameInput.value = '';
-                    showMessage(expenseSuccessMessageEl, true, 'Success! Friend added.');
-                } catch (error) {
-                    console.error("Error adding friend: ", error);
-                    showMessage(expenseErrorMessageEl, false, `Error adding friend: ${error.message}`);
-                }
-            }
+    function updateFriendSelectors() {
+      const selectors = ["expensePayer", "settlePayer", "settleReceiver", "debtFilter"];
+      selectors.forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = '<option value="">-- Select --</option>';
+        friends.forEach(friend => {
+          const option = document.createElement("option");
+          option.value = friend.name;
+          option.textContent = friend.name;
+          select.appendChild(option);
         });
+      });
+    }
 
-        // Event listener for deleting friends (delegation)
-        friendListEl.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-friend-btn')) {
-                const friendId = e.target.dataset.id;
-                deleteFriend(friendId);
-            }
-        });
+    function renderFriends() {
+      const list = document.getElementById("friendList");
+      list.innerHTML = "";
+      friends.forEach(friend => {
+        const div = document.createElement("div");
+        div.className = "friend";
+        div.innerHTML = `<span>${friend.name}</span><span>${friend.balance.toFixed(2)}</span>`;
+        list.appendChild(div);
+      });
+    }
 
+    function renderHistory() {
+      const log = document.getElementById("history");
+      log.innerHTML = "";
+      historyEntries.slice().reverse().forEach(entry => {
+        const item = document.createElement("div");
+        item.textContent = entry;
+        log.appendChild(item);
+      });
+    }
 
-        addExpenseForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            expenseErrorMessageEl.style.display = 'none'; // Hide previous error
-            expenseSuccessMessageEl.style.display = 'none'; // Hide previous success
+    function addFriend() {
+      const name = document.getElementById("friendName").value.trim();
+      if (name && !friends.find(f => f.name === name)) {
+        friends.push({ name, balance: 0 });
+        updateFriendSelectors();
+        renderFriends();
+        saveData();
+        document.getElementById("friendName").value = "";
+      }
+    }
 
-            const description = expenseDescriptionInput.value.trim();
-            const amount = parseFloat(expenseAmountInput.value);
-            const payerId = payerSelect.value;
-            const selectedParticipantIds = Array.from(document.querySelectorAll('.participant-checkbox:checked'))
-                                                .map(cb => cb.value);
-
-            if (!description) {
-                showMessage(expenseErrorMessageEl, false, "Please enter a description for the expense.");
-                return;
-            }
-            if (isNaN(amount) || amount <= 0) {
-                showMessage(expenseErrorMessageEl, false, "Please enter a valid amount (greater than 0).");
-                return;
-            }
-            if (!payerId) {
-                showMessage(expenseErrorMessageEl, false, "Please select who paid for the expense.");
-                return;
-            }
-            if (selectedParticipantIds.length === 0) {
-                showMessage(expenseErrorMessageEl, false, "Please select at least one participant for the expense.");
-                return;
-            }
-            if (!selectedParticipantIds.includes(payerId)) {
-                showMessage(expenseErrorMessageEl, false, "The payer must also be a participant in the expense.");
-                return;
-            }
-
-            const expenseData = {
-                description: description,
-                amount: amount,
-                payerId: payerId,
-                participantIds: selectedParticipantIds,
-                date: new Date().toISOString().split('T')[0], //ISO-MM-DD
-            };
-
-            try {
-                if (editingExpenseId) {
-                    // Update existing expense
-                    await db.collection('expenses').doc(editingExpenseId).update(expenseData);
-                    showMessage(expenseSuccessMessageEl, true, 'Success! Expense updated.');
-                } else {
-                    // Add new expense
-                    expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp(); // Only for new
-                    await db.collection('expenses').add(expenseData);
-                    showMessage(expenseSuccessMessageEl, true, 'Success! Expense added.');
-                }
-                resetExpenseForm();
-
-            } catch (error) {
-                console.error("Error saving expense: ", error);
-                showMessage(expenseErrorMessageEl, false, `Error saving expense: ${error.message}`);
-            }
-        });
-
-        cancelEditExpenseBtn.addEventListener('click', resetExpenseForm); // Cancel edit button
-
-        // Event listener for deleting/editing expenses (delegation)
-        expenseListEl.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-expense-btn')) {
-                const expenseId = e.target.dataset.id;
-                deleteExpense(expenseId);
-            } else if (e.target.classList.contains('edit-expense-btn')) {
-                const expenseId = e.target.dataset.id;
-                populateExpenseFormForEdit(expenseId);
-            }
-        });
-
-        // New: Record Payment form submission
-        recordPaymentForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            paymentErrorMessageEl.style.display = 'none';
-            paymentSuccessMessageEl.style.display = 'none';
-
-            const payerId = payerPaymentSelect.value;
-            const receiverId = receiverPaymentSelect.value;
-            const amount = parseFloat(paymentAmountInput.value);
-
-            if (!payerId || !receiverId || isNaN(amount) || amount <= 0 || payerId === receiverId) {
-                showMessage(paymentErrorMessageEl, false, "Please select different payer/receiver and enter a valid amount.");
-                return;
-            }
-
-            const paymentData = {
-                payerId: payerId,
-                receiverId: receiverId,
-                amount: amount,
-                date: new Date().toISOString().split('T')[0],
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            try {
-                await db.collection('payments').add(paymentData);
-                paymentAmountInput.value = '';
-                payerPaymentSelect.value = '';
-                receiverPaymentSelect.value = '';
-                showMessage(paymentSuccessMessageEl, true, 'Success! Payment recorded.');
-            } catch (error) {
-                console.error("Error recording payment: ", error);
-                showMessage(paymentErrorMessageEl, false, `Error recording payment: ${error.message}`);
-            }
-        });
-
-        // Event listener for deleting payments (delegation)
-        paymentHistoryEl.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-payment-btn')) {
-                const paymentId = e.target.dataset.id;
-                deletePayment(paymentId);
-            }
-        });
-
-        // --- Navigation Logic (New) ---
-        function showSection(targetId) {
-            sections.forEach(section => {
-                if (section.id === targetId) {
-                    section.classList.add('active-section');
-                    section.style.display = 'block'; // Ensure it's displayed
-                } else {
-                    section.classList.remove('active-section');
-                    section.style.display = 'none'; // Hide others
-                }
-            });
-
-            // Update active button in nav
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                if (btn.dataset.target === targetId) {
-                    btn.classList.add('active-tab');
-                } else {
-                    btn.classList.remove('active-tab');
-                }
-            });
+    function addExpense() {
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
+      const payer = document.getElementById("expensePayer").value;
+      if (!payer || isNaN(amount) || amount <= 0) return;
+      const split = amount / friends.length;
+      friends.forEach(friend => {
+        if (friend.name === payer) {
+          friend.balance += amount - split;
+        } else {
+          friend.balance -= split;
         }
+      });
+      renderFriends();
+      updateHistory(`${payer} paid $${amount.toFixed(2)} split between ${friends.length} friends`);
+      saveData();
+      document.getElementById("expenseAmount").value = "";
+      displayDebts();
+    }
 
-        // Add event listeners for navigation buttons
-        mainNav.addEventListener('click', (e) => {
-            if (e.target.classList.contains('nav-btn')) {
-                showSection(e.target.dataset.target);
-            }
-        });
+    function settleDebt() {
+      const payer = document.getElementById("settlePayer").value;
+      const receiver = document.getElementById("settleReceiver").value;
+      const amount = parseFloat(document.getElementById("settleAmount").value);
+      if (!payer || !receiver || payer === receiver || isNaN(amount) || amount <= 0) return;
+      friends.forEach(friend => {
+        if (friend.name === payer) friend.balance += amount;
+        if (friend.name === receiver) friend.balance -= amount;
+      });
+      renderFriends();
+      updateHistory(`${payer} settled $${amount.toFixed(2)} with ${receiver}`);
+      saveData();
+      document.getElementById("settleAmount").value = "";
+      displayDebts();
+    }
 
+    function displayDebts() {
+      const selected = document.getElementById("debtFilter").value;
+      const list = document.getElementById("debtList");
+      list.innerHTML = "";
+      if (!selected) return;
+      const fromPerson = friends.find(f => f.name === selected);
+      friends.forEach(friend => {
+        if (friend.name !== fromPerson.name) {
+          const diff = friend.balance - fromPerson.balance;
+          if (diff > 0.01) {
+            const div = document.createElement("div");
+            div.className = "debt";
+            div.innerHTML = `<span>${fromPerson.name} owes ${friend.name}</span><span>$${(diff / 2).toFixed(2)}</span>`;
+            list.appendChild(div);
+          }
+        }
+      });
+    }
 
-        // --- Firestore Real-time Listeners ---
+    function updateHistory(entry) {
+      const time = new Date().toLocaleString();
+      const record = `${time}: ${entry}`;
+      historyEntries.push(record);
+      renderHistory();
+    }
 
-        // Listen for real-time updates to friends collection
-        db.collection('friends').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
-            friends = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateUI();
-        }, error => {
-            console.error("Error fetching friends: ", error);
-            showMessage(expenseErrorMessageEl, false, "Error loading friends data.");
-        });
-
-        // Listen for real-time updates to expenses collection
-        db.collection('expenses').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
-            expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateUI();
-        }, error => {
-            console.error("Error fetching expenses: ", error);
-            showMessage(expenseErrorMessageEl, false, "Error loading expenses data.");
-        });
-
-        // New: Listen for real-time updates to payments collection
-        db.collection('payments').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
-            payments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateUI();
-        }, error => {
-            console.error("Error fetching payments: ", error);
-            showMessage(paymentErrorMessageEl, false, "Error loading payment data.");
-        });
-
-        // Initial setup: Show the first section (Friends) when the page loads
-        window.onload = () => {
-            showSection('friendsSection'); // Default to showing friends section
-            updateUI(); // Initial UI render
-        };
-
-    </script>
+    // Initial rendering from localStorage
+    updateFriendSelectors();
+    renderFriends();
+    renderHistory();
+    displayDebts();
+  </script>
 </body>
 </html>
