@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yarri Khata</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Global styles for body and root element */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #111827, #1f2937); /* bg-gray-900 to gray-800 equivalent */
+            color: #e5e7eb; /* text-gray-200 equivalent */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 16px; /* py-8 px-4 equivalent */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        #app {
+            width: 100%;
+            max-width: 448px; /* max-w-md equivalent */
+            background: #1f2937; /* bg-gray-800 equivalent */
+            border-radius: 24px; /* rounded-3xl equivalent */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl equivalent */
+            padding: 40px; /* p-10 equivalent */
+            border: 1px solid #374151; /* border-gray-700 equivalent */
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 3rem; /* text-5xl equivalent */
+            font-weight: 800; /* font-extrabold equivalent */
+            text-align: center;
+            color: #ffffff; /* text-white equivalent */
+            margin-bottom: 40px; /* mb-10 equivalent */
+            letter-spacing: -0.025em; /* tracking-tight equivalent */
+        }
+
+        section {
+            margin-bottom: 40px; /* mb-10 equivalent */
+            padding: 24px; /* p-6 equivalent */
+            background: #374151; /* bg-gray-700 equivalent */
+            border-radius: 16px; /* rounded-2xl equivalent */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg equivalent */
+            border: 1px solid #4b5563; /* border-gray-600 equivalent */
+            transition: transform 0.3s ease-in-out; /* transform hover:scale-[1.01] transition-transform duration-300 ease-in-out */
+        }
+        section:hover {
+            transform: scale(1.01);
+        }
+
+        h2 {
+            font-size: 2rem; /* text-3xl equivalent */
+            font-weight: 700; /* font-bold equivalent */
+            text-align: center;
+            margin-bottom: 24px; /* mb-6 equivalent */
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 16px; /* p-4 equivalent */
+            border: 1px solid #4b5563; /* border-gray-600 equivalent */
+            border-radius: 12px; /* rounded-xl equivalent */
+            outline: none;
+            background: #111827; /* bg-gray-900 equivalent */
+            color: #e5e7eb; /* text-gray-200 equivalent */
+            font-size: 1.125rem; /* text-lg equivalent */
+            transition: all 0.2s;
+        }
+        input[type="text"]::placeholder, input[type="number"]::placeholder {
+            color: #9ca3af; /* placeholder-gray-400 equivalent */
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5); /* focus:ring-4 focus:ring-blue-500 equivalent */
+        }
+
+        button {
+            padding: 16px 32px; /* px-8 py-4 equivalent */
+            font-weight: 600; /* font-semibold equivalent */
+            border-radius: 12px; /* rounded-xl equivalent */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md equivalent */
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Specific button styles */
+        .btn-blue {
+            background: #3b82f6; /* bg-blue-600 */
+            color: #ffffff; /* text-white */
+        }
+        .btn-blue:hover {
+            background: #2563eb; /* hover:bg-blue-700 */
+        }
+        .btn-green {
+            background: #10b981; /* bg-green-600 */
+            color: #ffffff;
+        }
+        .btn-green:hover {
+            background: #059669; /* hover:bg-green-700 */
+        }
+        .btn-red {
+            background: #ef4444; /* bg-red-600 */
+            color: #ffffff;
+        }
+        .btn-red:hover {
+            background: #dc2626; /* hover:bg-red-700 */
+        }
+        .btn-gray {
+            background: #4b5563; /* bg-gray-600 */
+            color: #d1d5db; /* text-gray-300 */
+        }
+        .btn-gray:hover {
+            background: #374151; /* hover:bg-gray-700 */
+        }
+
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid */
+            gap: 16px; /* gap-4 equivalent */
+            margin-top: 24px; /* mt-6 equivalent */
+        }
+        ul li {
+            background: #111827; /* bg-gray-900 equivalent */
+            padding: 16px; /* p-4 equivalent */
+            border-radius: 12px; /* rounded-xl equivalent */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md equivalent */
+            color: #93c5fd; /* text-blue-300 equivalent */
+            font-weight: 500; /* font-medium equivalent */
+            text-align: center;
+            font-size: 1.125rem; /* text-lg equivalent */
+            border: 1px solid #4b5563; /* border-gray-600 equivalent */
+            transition: all 0.2s;
+        }
+        ul li:hover {
+            background: #374151; /* hover:bg-gray-700 */
+            transform: scale(1.05);
+        }
+
+        .info-message {
+            color: #9ca3af; /* text-gray-400 equivalent */
+            font-style: italic;
+            text-align: center;
+            font-size: 1.125rem; /* text-lg equivalent */
+            margin-top: 16px; /* mt-4 equivalent */
+        }
+
+        .error-message {
+            background: rgba(127, 29, 29, 0.3); /* bg-red-900/30 equivalent */
+            border: 1px solid #b91c1c; /* border-red-700 equivalent */
+            color: #fca5a5; /* text-red-300 equivalent */
+            padding: 16px 24px; /* px-6 py-4 equivalent */
+            border-radius: 12px; /* rounded-xl equivalent */
+            position: relative;
+            font-size: 1.125rem; /* text-lg equivalent */
+            font-weight: 500; /* font-medium equivalent */
+            margin-bottom: 24px; /* mb-6 equivalent */
+        }
+        .error-message strong {
+            font-weight: bold;
+        }
+        .error-message span {
+            display: block; /* block sm:inline equivalent */
+        }
+
+        .expense-item, .balance-item {
+            background: #111827; /* bg-gray-900 equivalent */
+            padding: 20px; /* p-5 equivalent */
+            border-radius: 12px; /* rounded-xl equivalent */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md equivalent */
+            border: 1px solid #4b5563; /* border-gray-600 equivalent */
+            transition: all 0.2s;
+        }
+        .expense-item:hover, .balance-item:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.1); /* hover:shadow-lg */
+            transform: scale(1.01);
+        }
+
+        .expense-item p:first-of-type {
+            font-size: 1.25rem; /* text-xl equivalent */
+            font-weight: 600; /* font-semibold equivalent */
+            color: #e5e7eb; /* text-gray-100 equivalent */
+            margin-bottom: 8px; /* mb-2 equivalent */
+        }
+        .expense-item p span {
+            font-weight: 700; /* font-bold equivalent */
+        }
+        .expense-item p:nth-of-type(2), .expense-item p:nth-of-type(3) {
+            font-size: 1rem; /* text-base equivalent */
+            color: #d1d5db; /* text-gray-300 equivalent */
+            margin-bottom: 4px; /* mb-1 equivalent */
+        }
+        .expense-item p:nth-of-type(2) span, .expense-item p:nth-of-type(3) span {
+            font-weight: 500; /* font-medium equivalent */
+        }
+        .expense-item p:last-of-type {
+            font-size: 0.875rem; /* text-sm equivalent */
+            color: #9ca3af; /* text-gray-400 equivalent */
+            margin-top: 8px; /* mt-2 equivalent */
+        }
+
+        .balance-item p {
+            font-size: 1.25rem; /* text-xl equivalent */
+            color: #e5e7eb; /* text-gray-100 equivalent */
+        }
+        .balance-item p span {
+            font-weight: 600; /* font-semibold equivalent */
+        }
+        .balance-item p .amount-owed {
+            font-weight: 700; /* font-bold equivalent */
+            color: #f87171; /* text-red-400 equivalent */
+        }
+
+        /* Specific text colors for sections */
+        .friends-h2 { color: #60a5fa; } /* text-blue-400 */
+        .expenses-h2 { color: #4ade80; } /* text-green-400 */
+        .all-expenses-h2 { color: #facc15; } /* text-yellow-400 */
+        .balances-h2 { color: #c084fc; } /* text-purple-400 */
+        .expense-amount-text { color: #4ade80; } /* text-green-400 */
+        .payer-participant-text { color: #facc15; } /* text-yellow-400 */
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script>
+      // Your web app's Firebase configuration (COPY FROM YOUR CONSOLE)
+      const firebaseConfig = {
+        apiKey: "AIzaSyBIqVfI6aG6EdVi1jiPOSYmA3u05FtFveo",
+        authDomain: "yarri-khatta.firebaseapp.com",
+        projectId: "yarri-khatta",
+        storageBucket: "yarri-khatta.firebasestorage.app",
+        messagingSenderId: "693204826023",
+        appId: "1:693204826023:web:bf118538a4a722c8192882",
+        measurementId: "G-BM4E4VR28R" // Optional, for Google Analytics
+      };
+
+      // Initialize Firebase app
+      firebase.initializeApp(firebaseConfig);
+
+      // Get a reference to the Firestore service
+      const db = firebase.firestore();
+    </script>
+</head>
+<body>
+    <div id="app">
+        <h1 style="font-size: 3rem; font-weight: 800; text-align: center; color: #ffffff; margin-bottom: 40px; letter-spacing: -0.025em;">
+            Yarri Khata
+        </h1>
+
+        <section>
+            <h2 class="friends-h2">Friends</h2>
+            <form id="addFriendForm" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
+                <input
+                    type="text"
+                    id="friendNameInput"
+                    placeholder="Enter friend's name"
+                />
+                <button type="submit" class="btn-blue">
+                    Add Friend
+                </button>
+            </form>
+            <ul id="friendList">
+                </ul>
+            <p id="noFriendsMessage" class="info-message" style="display: none;">No friends added yet. Add some above!</p>
+        </section>
+
+        <section>
+            <h2 class="expenses-h2">Add New Expense</h2>
+            <div id="expenseErrorMessage" class="error-message" style="display: none;" role="alert">
+                <strong>Error!</strong>
+                <span id="expenseErrorText"></span>
+            </div>
+            <p id="addExpenseInfoMessage" class="info-message" style="display: none; color: #fca5a5;">Please add friends first before adding expenses.</p>
+
+            <form id="addExpenseForm" style="display: flex; flex-direction: column; gap: 24px;">
+                <div>
+                    <label for="descriptionInput" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Description:</label>
+                    <input type="text" id="expenseDescriptionInput" placeholder="e.g., Dinner at Italian place" />
+                </div>
+
+                <div>
+                    <label for="amountInput" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Amount (PKR):</label>
+                    <input type="number" id="expenseAmountInput" placeholder="e.g., 50.00" min="0.01" step="0.01" />
+                </div>
+
+                <div>
+                    <label for="payerSelect" style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Who paid?</label>
+                    <select id="payerSelect">
+                        <option value="">Select Payer</option>
+                        </select>
+                </div>
+
+                <div>
+                    <label style="display: block; color: #d1d5db; font-size: 1.125rem; font-weight: bold; margin-bottom: 8px;">Who participated?</label>
+                    <div id="participantCheckboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px;">
+                        </div>
+                </div>
+
+                <button type="submit" class="btn-green">
+                    Add Expense
+                </button>
+            </form>
+        </section>
+
+        <section>
+            <h2 class="all-expenses-h2">All Expenses</h2>
+            <div id="expenseList" style="display: flex; flex-direction: column; gap: 16px;">
+                </div>
+            <p id="noExpensesMessage" class="info-message" style="display: none;">No expenses added yet. Add some above!</p>
+        </section>
+
+        <section style="margin-bottom: 0;">
+            <h2 class="balances-h2">Balances to Settle</h2>
+            <div id="balanceSummary" style="display: flex; flex-direction: column; gap: 16px;">
+                </div>
+            <p id="noBalancesMessage" class="info-message" style="display: none;">No balances to settle yet. Add some expenses!</p>
+        </section>
+    </div>
+
+    <script>
+        // --- State Variables (will be populated from Firestore) ---
+        let friends = [];
+        let expenses = [];
+
+        // --- DOM Elements ---
+        const friendNameInput = document.getElementById('friendNameInput');
+        const addFriendForm = document.getElementById('addFriendForm');
+        const friendListEl = document.getElementById('friendList');
+        const noFriendsMessageEl = document.getElementById('noFriendsMessage');
+
+        const expenseDescriptionInput = document.getElementById('expenseDescriptionInput');
+        const expenseAmountInput = document.getElementById('expenseAmountInput');
+        const payerSelect = document.getElementById('payerSelect');
+        const participantCheckboxes = document.getElementById('participantCheckboxes');
+        const addExpenseForm = document.getElementById('addExpenseForm');
+        const expenseErrorMessageEl = document.getElementById('expenseErrorMessage');
+        const expenseErrorTextEl = document.getElementById('expenseErrorText');
+        const addExpenseInfoMessageEl = document.getElementById('addExpenseInfoMessage');
+
+        const expenseListEl = document.getElementById('expenseList');
+        const noExpensesMessageEl = document.getElementById('noExpensesMessage');
+
+        const balanceSummaryEl = document.getElementById('balanceSummary');
+        const noBalancesMessageEl = document.getElementById('noBalancesMessage');
+
+        // --- Helper Functions ---
+
+        /**
+         * Gets a friend's name by their ID.
+         * @param {string} id - The Firestore document ID of the friend.
+         * @returns {string} The friend's name or 'Unknown'.
+         */
+        function getFriendName(id) {
+            const friend = friends.find(f => f.id === id);
+            return friend ? friend.name : `Unknown (${id})`;
+        }
+
+        /**
+         * Calculates the balances between friends based on all recorded expenses.
+         * @returns {Array<object>} An array of objects showing who owes whom.
+         */
+        function calculateBalances() {
+            const netBalances = {};
+            friends.forEach(friend => {
+                netBalances[friend.id] = 0;
+            });
+
+            expenses.forEach(expense => {
+                const { amount, payerId, participantIds } = expense;
+                netBalances[payerId] += amount;
+                const sharePerParticipant = participantIds.length > 0 ? amount / participantIds.length : 0;
+                participantIds.forEach(participantId => {
+                    netBalances[participantId] -= sharePerParticipant;
+                });
+            });
+
+            const balancesToSettle = [];
+            const sortedFriendIds = Object.keys(netBalances).sort((a, b) => netBalances[a] - netBalances[b]);
+
+            let i = 0;
+            let j = sortedFriendIds.length - 1;
+
+            while (i < j) {
+                const debtorId = sortedFriendIds[i];
+                const creditorId = sortedFriendIds[j];
+
+                const debtorName = getFriendName(debtorId);
+                const creditorName = getFriendName(creditorId);
+
+                const debt = Math.abs(netBalances[debtorId]);
+                const credit = netBalances[creditorId];
+
+                const settlementAmount = Math.min(debt, credit);
+
+                if (settlementAmount > 0.01) {
+                    balancesToSettle.push({
+                        from: debtorName,
+                        to: creditorName,
+                        amount: settlementAmount.toFixed(2),
+                    });
+
+                    netBalances[debtorId] += settlementAmount;
+                    netBalances[creditorId] -= settlementAmount;
+                }
+
+                if (Math.abs(netBalances[debtorId]) < 0.01) {
+                    i++;
+                }
+                if (Math.abs(netBalances[creditorId]) < 0.01) {
+                    j--;
+                }
+                if (i === j && Math.abs(netBalances[debtorId]) > 0.01) {
+                    break;
+                }
+            }
+            return balancesToSettle;
+        }
+
+        // --- Render Functions ---
+
+        /**
+         * Renders the list of friends.
+         */
+        function renderFriendList() {
+            friendListEl.innerHTML = ''; // Clear existing list
+            if (friends.length === 0) {
+                noFriendsMessageEl.style.display = 'block';
+            } else {
+                noFriendsMessageEl.style.display = 'none';
+                friends.forEach(friend => {
+                    const li = document.createElement('li');
+                    li.textContent = friend.name;
+                    friendListEl.appendChild(li);
+                });
+            }
+        }
+
+        /**
+         * Renders the payer select dropdown and participant checkboxes for the expense form.
+         */
+        function renderExpenseFormParticipants() {
+            payerSelect.innerHTML = '<option value="">Select Payer</option>';
+            participantCheckboxes.innerHTML = '';
+
+            if (friends.length === 0) {
+                addExpenseForm.style.display = 'none';
+                addExpenseInfoMessageEl.style.display = 'block';
+                return;
+            } else {
+                addExpenseForm.style.display = 'flex';
+                addExpenseInfoMessageEl.style.display = 'none';
+            }
+
+            friends.forEach(friend => {
+                // Add to payer select
+                const option = document.createElement('option');
+                option.value = friend.id; // Use Firestore document ID
+                option.textContent = friend.name;
+                payerSelect.appendChild(option);
+
+                // Add to participant checkboxes
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.alignItems = 'center';
+                div.style.background = '#111827'; /* bg-gray-900 */
+                div.style.padding = '12px'; /* p-3 */
+                div.style.borderRadius = '8px'; /* rounded-lg */
+                div.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'; /* shadow-sm */
+                div.style.border = '1px solid #4b5563'; /* border-gray-600 */
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = `participant-${friend.id}`;
+                input.value = friend.id; // Use Firestore document ID
+                input.style.marginRight = '12px'; /* mr-3 */
+                input.style.height = '20px'; /* h-5 */
+                input.style.width = '20px'; /* w-5 */
+                input.style.color = '#34d399'; /* text-green-500 */
+                input.style.borderColor = '#9ca3af'; /* border-gray-500 */
+                input.style.borderRadius = '6px'; /* rounded-md */
+                input.style.cursor = 'pointer';
+                input.style.backgroundColor = '#374151'; /* bg-gray-700 */
+                input.classList.add('participant-checkbox'); // Add class for easier selection
+
+                const label = document.createElement('label');
+                label.htmlFor = `participant-${friend.id}`;
+                label.textContent = friend.name;
+                label.style.color = '#e5e7eb'; /* text-gray-200 */
+                label.style.fontSize = '1.125rem'; /* text-lg */
+                label.style.cursor = 'pointer';
+
+                div.appendChild(input);
+                div.appendChild(label);
+                participantCheckboxes.appendChild(div);
+            });
+        }
+
+        /**
+         * Renders the list of expenses.
+         */
+        function renderExpenseList() {
+            expenseListEl.innerHTML = '';
+            if (expenses.length === 0) {
+                noExpensesMessageEl.style.display = 'block';
+            } else {
+                noExpensesMessageEl.style.display = 'none';
+                // Sort records by date in descending order (newest first)
+                [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(expense => {
+                    const expenseDiv = document.createElement('div');
+                    expenseDiv.className = 'expense-item'; // Apply class for styling
+                    expenseDiv.innerHTML = `
+                        <p style="font-size: 1.25rem; font-weight: 600; color: #e5e7eb; margin-bottom: 8px;">
+                            ${expense.description} - <span style="color: #4ade80; font-weight: 700;">PKR ${expense.amount.toFixed(2)}</span>
+                        </p>
+                        <p style="font-size: 1rem; color: #d1d5db; margin-bottom: 4px;">
+                            Paid by: <span style="font-weight: 500; color: #facc15;">${getFriendName(expense.payerId)}</span>
+                        </p>
+                        <p style="font-size: 1rem; color: #d1d5db; margin-bottom: 4px;">
+                            Participants: <span style="font-weight: 500; color: #facc15;">
+                                ${expense.participantIds.map(id => getFriendName(id)).join(', ')}
+                            </span>
+                        </p>
+                        <p style="font-size: 0.875rem; color: #9ca3af; margin-top: 8px;">
+                            Date: ${expense.date}
+                        </p>
+                    `;
+                    expenseListEl.appendChild(expenseDiv);
+                });
+            }
+        }
+
+        /**
+         * Renders the balance summary.
+         */
+        function renderBalanceSummary() {
+            balanceSummaryEl.innerHTML = '';
+            const balances = calculateBalances();
+            if (balances.length === 0) {
+                noBalancesMessageEl.style.display = 'block';
+            } else {
+                noBalancesMessageEl.style.display = 'none';
+                balances.forEach(balance => {
+                    const balanceDiv = document.createElement('div');
+                    balanceDiv.className = 'balance-item'; // Apply class for styling
+                    balanceDiv.innerHTML = `
+                        <p style="font-size: 1.25rem; color: #e5e7eb;">
+                            <span style="font-weight: 600; color: #c084fc;">${balance.from}</span> owes
+                            <span style="font-weight: 600; color: #c084fc;">${balance.to}</span>
+                            <span style="font-weight: 700; color: #f87171;" class="amount-owed">PKR ${balance.amount}</span>
+                        </p>
+                    `;
+                    balanceSummaryEl.appendChild(balanceDiv);
+                });
+            }
+        }
+
+        /**
+         * Main function to update all UI sections.
+         */
+        function updateUI() {
+            renderFriendList();
+            renderExpenseFormParticipants();
+            renderExpenseList();
+            renderBalanceSummary();
+            // saveState(); // No longer needed, Firestore handles persistence
+        }
+
+        // --- Event Listeners ---
+
+        addFriendForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = friendNameInput.value.trim();
+            if (name) {
+                try {
+                    // Add friend to Firestore
+                    await db.collection('friends').add({ name: name, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    friendNameInput.value = '';
+                } catch (error) {
+                    console.error("Error adding friend: ", error);
+                    alert("Error adding friend. Please try again."); // Use alert for now
+                }
+            }
+        });
+
+        addExpenseForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            expenseErrorMessageEl.style.display = 'none'; // Hide previous error
+
+            const description = expenseDescriptionInput.value.trim();
+            const amount = parseFloat(expenseAmountInput.value);
+            const payerId = payerSelect.value; // Firestore document ID is a string
+            const selectedParticipantIds = Array.from(document.querySelectorAll('.participant-checkbox:checked'))
+                                                .map(cb => cb.value); // Firestore document IDs are strings
+
+            if (!description) {
+                expenseErrorMessageEl.style.display = 'block';
+                expenseErrorTextEl.textContent = "Please enter a description for the expense.";
+                return;
+            }
+            if (isNaN(amount) || amount <= 0) {
+                expenseErrorMessageEl.style.display = 'block';
+                expenseErrorTextEl.textContent = "Please enter a valid amount (greater than 0).";
+                return;
+            }
+            if (!payerId) {
+                expenseErrorMessageEl.style.display = 'block';
+                expenseErrorTextEl.textContent = "Please select who paid for the expense.";
+                return;
+            }
+            if (selectedParticipantIds.length === 0) {
+                expenseErrorMessageEl.style.display = 'block';
+                expenseErrorTextEl.textContent = "Please select at least one participant for the expense.";
+                return;
+            }
+
+            try {
+                // Add expense to Firestore
+                await db.collection('expenses').add({
+                    description: description,
+                    amount: amount,
+                    payerId: payerId,
+                    participantIds: selectedParticipantIds,
+                    date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp() // Timestamp for ordering
+                });
+
+                // Clear form
+                expenseDescriptionInput.value = '';
+                expenseAmountInput.value = '';
+                payerSelect.value = '';
+                document.querySelectorAll('.participant-checkbox:checked').forEach(cb => cb.checked = false);
+
+            } catch (error) {
+                console.error("Error adding expense: ", error);
+                alert("Error adding expense. Please try again."); // Use alert for now
+            }
+        });
+
+        // --- Firestore Real-time Listeners ---
+
+        // Listen for real-time updates to friends collection
+        db.collection('friends').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
+            friends = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            updateUI();
+        }, error => {
+            console.error("Error fetching friends: ", error);
+            alert("Error loading friends data.");
+        });
+
+        // Listen for real-time updates to expenses collection
+        db.collection('expenses').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
+            expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            updateUI();
+        }, error => {
+            console.error("Error fetching expenses: ", error);
+            alert("Error loading expenses data.");
+        });
+
+        // --- Initial Render (Firestore listeners will trigger the first updateUI) ---
+        // window.onload = updateUI; // No longer needed, onSnapshot handles initial load
+    </script>
+</body>
+</html>
