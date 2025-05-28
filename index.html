@@ -3,217 +3,575 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Friend Expense Splitter</title>
+  <title>Friend Expense Splitter (Client-Side Only)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      padding: 20px;
+    /* Custom scrollbar for webkit browsers */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
     }
-    h1, h2 {
-      text-align: center;
-    }
-    .container {
-      max-width: 500px;
-      margin: auto;
-    }
-    .section {
-      border: 1px solid #333;
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #2d3748; /* gray-800 */
       border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-      background-color: #1e1e1e;
     }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: none;
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #4a5568; /* gray-600 */
+      border-radius: 10px;
     }
-    input, select {
-      background-color: #2a2a2a;
-      color: #ffffff;
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #718096; /* gray-500 */
     }
-    button {
-      background-color: #4caf50;
-      color: white;
-      cursor: pointer;
+    /* Basic body styling for dark mode */
+    body {
+      font-family: 'Inter', sans-serif; /* Using Inter font as per guidelines */
     }
-    button:hover {
-      background-color: #45a049;
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: #374151; /* bg-gray-700 */
+        border-radius: 0.375rem; /* rounded-md */
+        cursor: pointer;
+        transition: background-color 0.2s;
     }
-    .friend {
-      display: flex;
-      justify-content: space-between;
-      padding: 5px 0;
+    .checkbox-label:hover {
+        background-color: #4b5563; /* bg-gray-600 */
     }
-    .scroll-area {
-      max-height: 150px;
-      overflow-y: auto;
-      background-color: #2a2a2a;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .debt {
-      display: flex;
-      justify-content: space-between;
-      padding: 5px 0;
+    .checkbox-label input[type="checkbox"] {
+        margin-right: 0.5rem;
+        accent-color: #10b981; /* emerald-500 */
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Friend Expense Splitter</h1>
+<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-6 md:p-8">
+  <div class="container mx-auto max-w-2xl">
+    <header class="mb-8 text-center">
+      <h1 class="text-4xl font-bold text-emerald-400">Friend Expense Splitter</h1>
+      <p class="text-sm text-gray-400 mt-2">All data is stored in your browser session and will be lost on refresh.</p>
+    </header>
 
-    <div class="section">
-      <h2>Add Friend</h2>
-      <input id="friendName" placeholder="Enter friend's name" />
-      <button onclick="addFriend()">Add Friend</button>
-      <div id="friendList"></div>
+    <div id="messageArea" class="mb-4 p-3 rounded-lg text-sm hidden"></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-gray-800 p-6 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Add Friend</h2>
+        <input id="friendName" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none" placeholder="Enter friend's name" />
+        <button onclick="addFriendHandler()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold p-3 rounded-lg transition duration-150 ease-in-out">Add Friend</button>
+        <div id="friendListContainer" class="mt-4">
+          <h3 class="text-lg font-medium mb-2 text-gray-300">Friends & Balances:</h3>
+          <div id="friendList" class="space-y-2 max-h-48 custom-scrollbar overflow-y-auto bg-gray-700 p-3 rounded-lg">
+            <p class="text-gray-400">No friends added yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 p-6 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Add Expense</h2>
+        <input id="expenseDescription" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none" placeholder="Expense description (e.g., Dinner)" />
+        <input id="expenseAmount" type="number" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none" placeholder="Amount paid" />
+        <select id="expensePayer" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none">
+          <option value="">-- Select Payer --</option>
+        </select>
+        
+        <div class="mb-3">
+            <h4 class="text-md font-medium mb-2 text-gray-300">Split among (select friends):</h4>
+            <div id="expenseSplitCheckboxes" class="space-y-2 max-h-32 custom-scrollbar overflow-y-auto bg-gray-700 p-3 rounded-lg border border-gray-600">
+                <p class="text-gray-400 text-sm">Add friends to see options.</p>
+            </div>
+        </div>
+
+        <button onclick="addExpenseHandler()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold p-3 rounded-lg transition duration-150 ease-in-out">Split Expense</button>
+      </div>
     </div>
 
-    <div class="section">
-      <h2>Add Expense</h2>
-      <input id="expenseAmount" type="number" placeholder="Amount paid" />
-      <select id="expensePayer"></select>
-      <button onclick="addExpense()">Split Expense</button>
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl mt-6">
+      <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Settle Debt</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+        <div>
+          <label for="settlePayer" class="block text-sm font-medium text-gray-300 mb-1">Who is paying:</label>
+          <select id="settlePayer" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none">
+            <option value="">-- Select Payer --</option>
+          </select>
+        </div>
+        <div>
+          <label for="settleReceiver" class="block text-sm font-medium text-gray-300 mb-1">Who is receiving:</label>
+          <select id="settleReceiver" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none">
+            <option value="">-- Select Receiver --</option>
+          </select>
+        </div>
+      </div>
+      <input id="settleAmount" type="number" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none" placeholder="Amount to settle" />
+      <button onclick="settleDebtHandler()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 rounded-lg transition duration-150 ease-in-out">Settle</button>
     </div>
 
-    <div class="section">
-      <h2>Settle Debt</h2>
-      <label for="settlePayer">Who is paying:</label>
-      <select id="settlePayer"></select>
-      <label for="settleReceiver">Who is receiving:</label>
-      <select id="settleReceiver"></select>
-      <input id="settleAmount" type="number" placeholder="Amount to settle" />
-      <button onclick="settleDebt()">Settle</button>
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl mt-6">
+      <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Debts Overview</h2>
+      <label for="debtOverviewFriendSelect" class="block text-sm font-medium text-gray-300 mb-1">Select friend to see their debts:</label>
+      <select id="debtOverviewFriendSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none">
+        <option value="">-- Select a Friend --</option>
+      </select>
+      <div id="specificFriendDebtsDiv" class="space-y-2 text-gray-300">
+        <p class="text-gray-400">Select a friend from the dropdown to see details.</p>
+      </div>
     </div>
 
-    <div class="section">
-      <h2>Who Owes Whom</h2>
-      <select id="debtFilter" onchange="displayDebts()"></select>
-      <div id="debtList"></div>
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl mt-6">
+      <h2 class="text-2xl font-semibold mb-4 text-emerald-300">Transaction History</h2>
+      <div id="history" class="max-h-60 custom-scrollbar overflow-y-auto bg-gray-700 p-4 rounded-lg space-y-2">
+        <p class="text-gray-400">No transactions yet.</p>
+      </div>
     </div>
 
-    <div class="section">
-      <h2>Transaction History</h2>
-      <div class="scroll-area" id="history"></div>
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl mt-6 text-center">
+      <button onclick="confirmResetAll()" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out">Reset All Data</button>
     </div>
 
-    <div class="section">
-      <button onclick="resetAll()">Reset All Transactions</button>
+    <div id="confirmationModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl max-w-sm w-full">
+            <h3 id="modalTitle" class="text-xl font-semibold mb-4 text-white">Confirm Action</h3>
+            <p id="modalMessage" class="text-gray-300 mb-6">Are you sure you want to proceed?</p>
+            <div class="flex justify-end space-x-3">
+                <button id="modalCancelButton" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg">Cancel</button>
+                <button id="modalConfirmButton" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">Confirm</button>
+            </div>
+        </div>
     </div>
+
   </div>
 
   <script>
-    const friends = [];
-    const history = [];
+    // --- Global State (In-memory storage) ---
+    let friendsData = [];
+    let transactionsData = []; // To store history
+    let nextFriendId = 1; // Simple ID counter for friends
+    let nextTransactionId = 1; // Simple ID counter for transactions
+
+    // --- UI Elements ---
+    const friendNameInput = document.getElementById("friendName");
+    const friendListDiv = document.getElementById("friendList");
+    const expenseDescriptionInput = document.getElementById("expenseDescription");
+    const expenseAmountInput = document.getElementById("expenseAmount");
+    const expensePayerSelect = document.getElementById("expensePayer");
+    const expenseSplitCheckboxesDiv = document.getElementById("expenseSplitCheckboxes"); 
+    const settlePayerSelect = document.getElementById("settlePayer");
+    const settleReceiverSelect = document.getElementById("settleReceiver");
+    const settleAmountInput = document.getElementById("settleAmount");
+    const debtOverviewFriendSelect = document.getElementById("debtOverviewFriendSelect"); 
+    const specificFriendDebtsDiv = document.getElementById("specificFriendDebtsDiv"); 
+    const historyDiv = document.getElementById("history");
+    const messageArea = document.getElementById("messageArea");
+
+    // --- Modal Elements & Logic ---
+    const confirmationModal = document.getElementById('confirmationModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalCancelButton = document.getElementById('modalCancelButton');
+    const modalConfirmButton = document.getElementById('modalConfirmButton');
+    let currentModalConfirmAction = null;
+
+    function showModal(title, message, onConfirm, confirmButtonClass = 'bg-red-600 hover:bg-red-700') {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        currentModalConfirmAction = onConfirm;
+        modalConfirmButton.className = `px-4 py-2 text-white rounded-lg ${confirmButtonClass}`;
+        confirmationModal.classList.remove('hidden');
+    }
+
+    modalCancelButton.onclick = () => {
+        confirmationModal.classList.add('hidden');
+        currentModalConfirmAction = null;
+    };
+
+    modalConfirmButton.onclick = () => {
+        if (currentModalConfirmAction) {
+            currentModalConfirmAction();
+        }
+        confirmationModal.classList.add('hidden');
+        currentModalConfirmAction = null;
+    };
+    
+    // --- Utility Functions ---
+    function showMessage(text, type = 'success') {
+        messageArea.textContent = text;
+        messageArea.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-blue-500', 'text-white');
+        if (type === 'success') {
+            messageArea.classList.add('bg-green-500', 'text-white');
+        } else if (type === 'error') {
+            messageArea.classList.add('bg-red-500', 'text-white');
+        } else { // info
+             messageArea.classList.add('bg-blue-500', 'text-white');
+        }
+        setTimeout(() => {
+            messageArea.classList.add('hidden');
+        }, 3000);
+    }
+
+    // --- App Initialization (initial render) ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderFriends();
+        updateFriendSelectors();
+        renderExpenseSplitCheckboxes();
+        renderHistory();
+        debtOverviewFriendSelect.addEventListener('change', displayDebts);
+    });
+    
+    // --- Friend Management ---
+    function renderFriends() {
+        friendListDiv.innerHTML = ""; 
+        if (friendsData.length === 0) {
+            friendListDiv.innerHTML = '<p class="text-gray-400">No friends added yet.</p>';
+            return;
+        }
+        const sortedFriends = [...friendsData].sort((a, b) => a.name.localeCompare(b.name));
+
+        sortedFriends.forEach(friend => {
+            const div = document.createElement("div");
+            div.className = "flex justify-between items-center p-2 bg-gray-600 rounded-md";
+            
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = friend.name;
+            nameSpan.className = "text-gray-100";
+            
+            const balanceSpan = document.createElement("span");
+            balanceSpan.textContent = `$${friend.balance.toFixed(2)}`;
+            balanceSpan.className = friend.balance < -0.001 ? "text-red-400 font-semibold" : (friend.balance > 0.001 ? "text-green-400 font-semibold" : "text-gray-300 font-semibold");
+            
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "✕";
+            removeButton.className = "text-red-400 hover:text-red-300 text-xs px-1";
+            removeButton.title = `Remove ${friend.name}`;
+            removeButton.onclick = (event) => {
+                event.stopPropagation(); 
+                confirmRemoveFriend(friend.id, friend.name);
+            };
+
+            div.appendChild(nameSpan);
+            const balanceAndRemove = document.createElement("div");
+            balanceAndRemove.className = "flex items-center space-x-2";
+            balanceAndRemove.appendChild(balanceSpan);
+            balanceAndRemove.appendChild(removeButton);
+            div.appendChild(balanceAndRemove);
+
+            friendListDiv.appendChild(div);
+        });
+    }
+    
+    function confirmRemoveFriend(friendId, friendName) {
+        const friend = friendsData.find(f => f.id === friendId);
+        if (friend && Math.abs(friend.balance) > 0.001) {
+             showMessage(`Cannot remove ${friendName} as they have an outstanding balance. Settle debts first.`, "error");
+             return;
+        }
+        showModal(
+            `Remove ${friendName}?`,
+            `Are you sure you want to remove ${friendName}? This action cannot be undone.`,
+            () => {
+                removeFriend(friendId, friendName);
+            }
+        );
+    }
+
+    function removeFriend(friendId, friendName) {
+        friendsData = friendsData.filter(f => f.id !== friendId);
+        addTransactionToHistory(`Removed friend: ${friendName}.`, "system");
+        showMessage(`${friendName} removed successfully.`, "success");
+        renderAll(); // Re-render everything
+    }
 
     function updateFriendSelectors() {
-      const selectors = ["expensePayer", "settlePayer", "settleReceiver", "debtFilter"];
-      selectors.forEach(id => {
-        const select = document.getElementById(id);
-        select.innerHTML = '<option value="">-- Select --</option>';
-        friends.forEach(friend => {
-          const option = document.createElement("option");
-          option.value = friend.name;
-          option.textContent = friend.name;
-          select.appendChild(option);
+        const selectors = [expensePayerSelect, settlePayerSelect, settleReceiverSelect, debtOverviewFriendSelect];
+        const sortedFriends = [...friendsData].sort((a, b) => a.name.localeCompare(b.name));
+
+        selectors.forEach(select => {
+            if (!select) return; 
+            const currentValue = select.value; 
+            let defaultOptionText = "-- Select Friend --";
+            if (select.id === 'debtOverviewFriendSelect') {
+                defaultOptionText = "-- Select a Friend --";
+            } else if (select.id === 'expensePayer') {
+                defaultOptionText = "-- Select Payer --";
+            }
+
+            select.innerHTML = `<option value="">${defaultOptionText}</option>`; 
+            
+            sortedFriends.forEach(friend => {
+                const option = document.createElement("option");
+                option.value = friend.id; 
+                option.textContent = friend.name;
+                select.appendChild(option);
+            });
+
+            if (sortedFriends.find(f => f.id === currentValue)) {
+                select.value = currentValue;
+            } else {
+                select.value = ""; 
+            }
         });
-      });
     }
 
-    function renderFriends() {
-      const list = document.getElementById("friendList");
-      list.innerHTML = "";
-      friends.forEach(friend => {
-        const div = document.createElement("div");
-        div.className = "friend";
-        div.innerHTML = `<span>${friend.name}</span><span>${friend.balance.toFixed(2)}</span>`;
-        list.appendChild(div);
-      });
-    }
-
-    function addFriend() {
-      const name = document.getElementById("friendName").value.trim();
-      if (name && !friends.find(f => f.name === name)) {
-        friends.push({ name, balance: 0 });
-        updateFriendSelectors();
-        renderFriends();
-        document.getElementById("friendName").value = "";
-      }
-    }
-
-    function addExpense() {
-      const amount = parseFloat(document.getElementById("expenseAmount").value);
-      const payer = document.getElementById("expensePayer").value;
-      if (!payer || isNaN(amount) || amount <= 0) return;
-      const split = amount / friends.length;
-      friends.forEach(friend => {
-        if (friend.name === payer) {
-          friend.balance += amount - split * (friends.length - 1);
-        } else {
-          friend.balance -= split;
+    function renderExpenseSplitCheckboxes() {
+        expenseSplitCheckboxesDiv.innerHTML = ""; 
+        if (friendsData.length === 0) {
+            expenseSplitCheckboxesDiv.innerHTML = '<p class="text-gray-400 text-sm">Add friends to see options.</p>';
+            return;
         }
-      });
-      renderFriends();
-      updateHistory(`${payer} paid $${amount.toFixed(2)} split among ${friends.length} friends`);
-      document.getElementById("expenseAmount").value = "";
-      displayDebts();
+        const sortedFriends = [...friendsData].sort((a, b) => a.name.localeCompare(b.name));
+
+        sortedFriends.forEach(friend => {
+            const label = document.createElement("label");
+            label.className = "checkbox-label text-gray-200"; 
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = friend.id;
+            checkbox.id = `split_cb_${friend.id}`;
+            checkbox.checked = true; 
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(` ${friend.name}`));
+            expenseSplitCheckboxesDiv.appendChild(label);
+        });
     }
 
-    function settleDebt() {
-      const payer = document.getElementById("settlePayer").value;
-      const receiver = document.getElementById("settleReceiver").value;
-      const amount = parseFloat(document.getElementById("settleAmount").value);
-      if (!payer || !receiver || payer === receiver || isNaN(amount) || amount <= 0) return;
-      friends.forEach(friend => {
-        if (friend.name === payer) friend.balance += amount;
-        if (friend.name === receiver) friend.balance -= amount;
-      });
-      renderFriends();
-      updateHistory(`${payer} settled $${amount.toFixed(2)} with ${receiver}`);
-      document.getElementById("settleAmount").value = "";
-      displayDebts();
+    function addFriendHandler() {
+        const name = friendNameInput.value.trim();
+        if (name && !friendsData.some(f => f.name.toLowerCase() === name.toLowerCase())) {
+            friendsData.push({ id: nextFriendId++, name: name, balance: 0 });
+            addTransactionToHistory(`Added friend: ${name}`, "system");
+            friendNameInput.value = ""; 
+            showMessage(`${name} added successfully!`, "success");
+            renderAll(); 
+        } else if (friendsData.some(f => f.name.toLowerCase() === name.toLowerCase())) {
+            showMessage("A friend with this name already exists.", "error");
+        } else if (!name) {
+            showMessage("Friend name cannot be empty.", "error");
+        }
+    }
+
+    function addExpenseHandler() {
+        const description = expenseDescriptionInput.value.trim();
+        const amount = parseFloat(expenseAmountInput.value);
+        const payerId = parseInt(expensePayerSelect.value); // Convert to number for comparison
+
+        if (!description) {
+            showMessage("Please enter an expense description.", "error");
+            return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+            showMessage("Please enter a valid positive amount.", "error");
+            return;
+        }
+        if (!payerId) {
+            showMessage("Please select who paid.", "error");
+            return;
+        }
+
+        const selectedFriendIdsForSplit = [];
+        expenseSplitCheckboxesDiv.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+            selectedFriendIdsForSplit.push(parseInt(cb.value)); // Convert to number
+        });
+
+        if (selectedFriendIdsForSplit.length === 0) {
+            showMessage("Please select at least one friend to split the expense with.", "error");
+            return;
+        }
+
+        const payer = friendsData.find(f => f.id === payerId);
+        if (!payer) {
+            showMessage("Selected payer not found.", "error");
+            return;
+        }
+
+        const splitAmongCount = selectedFriendIdsForSplit.length;
+        const splitAmountPerSelectedFriend = amount / splitAmongCount;
+        
+        friendsData = friendsData.map(friend => {
+            let newBalance = friend.balance; 
+
+            if (friend.id === payerId) { 
+                if (selectedFriendIdsForSplit.includes(payerId)) {
+                    newBalance += (amount - splitAmountPerSelectedFriend);
+                } else {
+                    newBalance += amount;
+                }
+            } else { 
+                if (selectedFriendIdsForSplit.includes(friend.id)) {
+                    newBalance -= splitAmountPerSelectedFriend;
+                }
+            }
+            return { ...friend, balance: newBalance };
+        });
+        
+        const involvedInSplitNames = friendsData
+            .filter(f => selectedFriendIdsForSplit.includes(f.id))
+            .map(f => f.name);
+
+        addTransactionToHistory(
+            `${payer.name} paid $${amount.toFixed(2)} for "${description}".`, 
+            "expense", 
+            amount, 
+            payer.name, 
+            involvedInSplitNames 
+        );
+        expenseDescriptionInput.value = "";
+        expenseAmountInput.value = "";
+        expensePayerSelect.value = "";
+        expenseSplitCheckboxesDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+        showMessage("Expense split successfully!", "success");
+        renderAll();
+    }
+
+    function settleDebtHandler() {
+        const payerId = parseInt(settlePayerSelect.value);
+        const receiverId = parseInt(settleReceiverSelect.value);
+        const amount = parseFloat(settleAmountInput.value);
+
+        if (!payerId || !receiverId) {
+            showMessage("Please select both payer and receiver.", "error");
+            return;
+        }
+        if (payerId === receiverId) {
+            showMessage("Payer and receiver cannot be the same person.", "error");
+            return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+            showMessage("Please enter a valid positive settlement amount.", "error");
+            return;
+        }
+        
+        const payer = friendsData.find(f => f.id === payerId);
+        const receiver = friendsData.find(f => f.id === receiverId);
+
+        if (!payer || !receiver) {
+            showMessage("Payer or receiver not found.", "error"); 
+            return;
+        }
+
+        friendsData = friendsData.map(friend => {
+            if (friend.id === payerId) {
+                return { ...friend, balance: friend.balance + amount };
+            } else if (friend.id === receiverId) {
+                return { ...friend, balance: friend.balance - amount };
+            }
+            return friend;
+        });
+
+        addTransactionToHistory(`${payer.name} paid $${amount.toFixed(2)} to ${receiver.name}.`, "settlement", amount, payer.name, [receiver.name]);
+        settleAmountInput.value = "";
+        settlePayerSelect.value = "";
+        settleReceiverSelect.value = "";
+        showMessage("Debt settled successfully!", "success");
+        renderAll();
     }
 
     function displayDebts() {
-      const selected = document.getElementById("debtFilter").value;
-      const list = document.getElementById("debtList");
-      list.innerHTML = "";
-      if (!selected) return;
-      const fromPerson = friends.find(f => f.name === selected);
-      friends.forEach(friend => {
-        if (friend.name !== fromPerson.name) {
-          const diff = fromPerson.balance - friend.balance;
-          if (diff < -0.01) {
-            const div = document.createElement("div");
-            div.className = "debt";
-            div.innerHTML = `<span>${fromPerson.name} owes ${friend.name}</span><span>$${(-diff / 2).toFixed(2)}</span>`;
-            list.appendChild(div);
-          }
+        const selectedFriendId = parseInt(debtOverviewFriendSelect.value);
+        specificFriendDebtsDiv.innerHTML = ""; 
+
+        if (!selectedFriendId) {
+            specificFriendDebtsDiv.innerHTML = '<p class="text-gray-400">Select a friend from the dropdown to see details.</p>';
+            return;
         }
-      });
+
+        const selectedFriend = friendsData.find(f => f.id === selectedFriendId);
+        if (!selectedFriend) {
+            specificFriendDebtsDiv.innerHTML = '<p class="text-red-400">Selected friend not found.</p>';
+            return;
+        }
+
+        if (selectedFriend.balance >= -0.001) { 
+            specificFriendDebtsDiv.innerHTML = `<p class="text-green-400">${selectedFriend.name} does not currently owe any money.</p>`;
+            return;
+        }
+
+        let amountOwedBySelected = Math.abs(selectedFriend.balance);
+        const creditors = friendsData.filter(f => f.id !== selectedFriendId && f.balance > 0.001)
+                                     .sort((a, b) => b.balance - a.balance); 
+
+        if (creditors.length === 0) {
+            specificFriendDebtsDiv.innerHTML = `<p>${selectedFriend.name} owes a total of <span class="font-semibold text-red-300">$${amountOwedBySelected.toFixed(2)}</span>, but there are no clear net creditors currently. Debts might be complex or settled among multiple parties.</p>`;
+            return;
+        }
+        
+        let debtsListed = false;
+        creditors.forEach(creditor => {
+            if (amountOwedBySelected <= 0.001) return; 
+
+            const amountPayableToThisCreditor = Math.min(amountOwedBySelected, creditor.balance);
+
+            if (amountPayableToThisCreditor > 0.001) {
+                const div = document.createElement("div");
+                div.className = "flex justify-between items-center text-sm p-1.5 bg-gray-700 rounded";
+                div.innerHTML = `<span>${selectedFriend.name} owes ${creditor.name}:</span><span class="font-semibold text-red-300">$${amountPayableToThisCreditor.toFixed(2)}</span>`;
+                specificFriendDebtsDiv.appendChild(div);
+                amountOwedBySelected -= amountPayableToThisCreditor;
+                debtsListed = true;
+            }
+        });
+
+        if (!debtsListed) {
+            specificFriendDebtsDiv.innerHTML = `<p>${selectedFriend.name} owes <span class="font-semibold text-red-300">$${Math.abs(selectedFriend.balance).toFixed(2)}</span> in total. The specific distribution might require complex settlement calculations if direct creditors aren't immediately obvious.</p>`;
+        }
     }
 
-    function updateHistory(entry) {
-      const log = document.getElementById("history");
-      const time = new Date().toLocaleString();
-      const item = document.createElement("div");
-      item.textContent = `${time}: ${entry}`;
-      log.prepend(item);
+    function addTransactionToHistory(description, type, amount = null, payer = null, involved = null) {
+        transactionsData.push({
+            id: nextTransactionId++,
+            description: description,
+            timestamp: new Date().toLocaleString(), // Simple local timestamp
+            type: type,
+            amount: amount,
+            payer: payer,
+            involved: involved
+        });
+        renderHistory();
     }
 
-    function resetAll() {
-      friends.forEach(f => f.balance = 0);
-      document.getElementById("history").innerHTML = "";
-      renderFriends();
-      displayDebts();
+    function renderHistory() {
+        historyDiv.innerHTML = ""; 
+        if (transactionsData.length === 0) {
+            historyDiv.innerHTML = '<p class="text-gray-400">No transactions yet.</p>';
+            return;
+        }
+        // Display in reverse chronological order (most recent first)
+        const sortedTransactions = [...transactionsData].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        sortedTransactions.forEach(entry => {
+            const item = document.createElement("div");
+            item.className = "text-sm p-2 bg-gray-600 rounded-md";
+            item.textContent = `${entry.timestamp}: ${entry.description}`;
+            historyDiv.appendChild(item); 
+        });
     }
+    
+    window.confirmResetAll = () => { 
+        showModal(
+            "Reset All Data?",
+            "Are you sure you want to reset all friends, balances, and transaction history? This action cannot be undone.",
+            () => {
+                friendsData = [];
+                transactionsData = [];
+                nextFriendId = 1;
+                nextTransactionId = 1;
+                showMessage("All data reset successfully!", "success");
+                renderAll();
+            }
+        );
+    };
+
+    // Function to re-render all dynamic parts of the UI
+    function renderAll() {
+        renderFriends();
+        updateFriendSelectors();
+        renderExpenseSplitCheckboxes();
+        displayDebts(); // Re-display debts for the currently selected friend
+        renderHistory();
+    }
+
+    // Expose handlers to the global scope for onclick attributes
+    window.addFriendHandler = addFriendHandler;
+    window.addExpenseHandler = addExpenseHandler;
+    window.settleDebtHandler = settleDebtHandler;
   </script>
 </body>
 </html>
